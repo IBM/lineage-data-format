@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]         
+build-backend = "hatchling.build"
+
+[project]
+name = "ldf"
+version = "0.1.0"
+description = "Lineage Definition Format — token-optimized graph serialization"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+dependencies = []              
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7",
+    "pytest-cov",
+]
+
+[project.scripts]
+ldf = "ldf.cli:main"  
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ldf"]

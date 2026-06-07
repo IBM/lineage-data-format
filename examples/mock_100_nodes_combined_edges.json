@@ -1,0 +1,4506 @@
+{
+  "graphId": "70080c2c-76a8-48b0-a3d1-8cdfa5bec747",
+  "startingNodeIds": [
+    "62ee9905-e48f-4b0c-b1ff-6ec565e67524"
+  ],
+  "nodes": [
+    {
+      "id": "62ee9905-e48f-4b0c-b1ff-6ec565e67524",
+      "type": "schema",
+      "name": "Node 1",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "4585de25-bf70-49e1-a151-135ff528f4dc",
+      "type": "schema",
+      "name": "Node 2",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "f7c8e0c2-bf36-4695-b84b-669c5c083b27",
+      "type": "schema",
+      "name": "Node 3",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "f73b49ac-d8fc-4b57-8a5a-e5cde092cde3",
+      "type": "schema",
+      "name": "Node 4",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "3da5003b-3596-44c5-87e5-c513732268c3",
+      "type": "schema",
+      "name": "Node 5",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "7f70d0da-cfc7-439a-8ef9-176b03c21069",
+      "type": "schema",
+      "name": "Node 6",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "bf66eb2e-76a9-4e45-9523-db4c734173ad",
+      "type": "schema",
+      "name": "Node 7",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "4d222ed4-deab-442a-bdf3-f5d304855e36",
+      "type": "schema",
+      "name": "Node 8",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "532cdb15-c6df-4b64-ad11-0035fd2b71f9",
+      "type": "schema",
+      "name": "Node 9",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "f956df0e-53ab-450f-ad37-b0845a96bc50",
+      "type": "schema",
+      "name": "Node 10",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "1a6926f0-9eba-4e24-a39e-0308581205af",
+      "type": "schema",
+      "name": "Node 11",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "1ddeab98-6f7f-47ff-9db9-ba459c87dcbf",
+      "type": "schema",
+      "name": "Node 12",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "73abfbb3-0569-4ce8-a255-8b21a11b7809",
+      "type": "schema",
+      "name": "Node 13",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "9e5f2d56-7888-4dca-ad24-7aa4a88b50e5",
+      "type": "schema",
+      "name": "Node 14",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "3bcb31aa-cd63-4f0b-8499-0dbca5a1e6a4",
+      "type": "schema",
+      "name": "Node 15",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "6024e2e6-43c3-4348-8edb-4028e41413b4",
+      "type": "schema",
+      "name": "Node 16",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "ad7911d4-0134-432b-b676-cf21e8cc910f",
+      "type": "schema",
+      "name": "Node 17",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "f114cfb8-2542-4ce0-be9d-910f3bf9acbf",
+      "type": "schema",
+      "name": "Node 18",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "8b587d50-e119-47f1-99f9-6955371aa589",
+      "type": "schema",
+      "name": "Node 19",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "4cef5383-da94-42c3-a0aa-9ba579efa9ac",
+      "type": "schema",
+      "name": "Node 20",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "580f6463-4896-4f6a-9f6c-87a740db2fb3",
+      "type": "schema",
+      "name": "Node 21",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "a5e0407e-9777-44ff-9919-85793b61ef5a",
+      "type": "schema",
+      "name": "Node 22",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "ba2a25de-c7ed-447c-9036-654521ec95e4",
+      "type": "schema",
+      "name": "Node 23",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "f6e7da95-a11b-4ef0-bb3a-02f315b700ea",
+      "type": "schema",
+      "name": "Node 24",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "65db5dca-11a2-4514-8f6e-67b5e5d9d021",
+      "type": "schema",
+      "name": "Node 25",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "4f80c119-95c6-48cf-a8d2-30ef96cdaa98",
+      "type": "schema",
+      "name": "Node 26",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "2919e175-bdb7-402c-8f29-391a40ea0aff",
+      "type": "schema",
+      "name": "Node 27",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "7fa6d188-89d7-4baf-a416-bef31503c51c",
+      "type": "schema",
+      "name": "Node 28",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "081d510c-c9ae-45a0-838d-d6e63eafdde3",
+      "type": "schema",
+      "name": "Node 29",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "1a061369-b308-442f-b685-3d6bb44b2cec",
+      "type": "schema",
+      "name": "Node 30",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "67731e8f-400b-4199-b837-6a87e4d6d7c1",
+      "type": "schema",
+      "name": "Node 31",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "8e2745a3-9269-4a7e-8a3e-bf3f4b89f063",
+      "type": "schema",
+      "name": "Node 32",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "9b504f32-e2f5-4790-a9ea-0ed3b9840edd",
+      "type": "schema",
+      "name": "Node 33",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "a523d1fd-8aa6-4a8e-8f07-589e17c61d06",
+      "type": "schema",
+      "name": "Node 34",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "d539af99-dd2e-4c18-beaa-9118edd1c7c3",
+      "type": "schema",
+      "name": "Node 35",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "eb7297ae-6988-4850-aba1-8c11af5e498d",
+      "type": "schema",
+      "name": "Node 36",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "0f0680f5-e1ad-44d9-a587-ccfe23ea3f2d",
+      "type": "schema",
+      "name": "Node 37",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "969f210b-a3ed-41c6-8142-d7edaffc2b58",
+      "type": "schema",
+      "name": "Node 38",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "eafb008d-f7de-4fdb-b536-bafb345d00d5",
+      "type": "schema",
+      "name": "Node 39",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "953fa613-909a-4618-a6df-43720faa258d",
+      "type": "schema",
+      "name": "Node 40",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "1d15da31-8862-4f74-a04c-8e3637eaf4a0",
+      "type": "schema",
+      "name": "Node 41",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "b148b1b5-5f63-4784-b9a1-3b30738ec86c",
+      "type": "schema",
+      "name": "Node 42",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "f2232365-65ed-45e9-947c-db0c819f3dc9",
+      "type": "schema",
+      "name": "Node 43",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "a89e2dfc-53cb-4d0d-b434-bf21706c002c",
+      "type": "schema",
+      "name": "Node 44",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "d8fdf108-7909-400e-bfd0-dd21318a51ea",
+      "type": "schema",
+      "name": "Node 45",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "6960742f-1047-4ba6-b77c-5dcc43945138",
+      "type": "schema",
+      "name": "Node 46",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "c85ccb21-9931-45ff-8a57-b0a71344aaf5",
+      "type": "schema",
+      "name": "Node 47",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "bfdd0eac-6bb7-4dd6-a463-72bb11e1f065",
+      "type": "schema",
+      "name": "Node 48",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "3609d6ad-3486-4373-a728-782fdbf3e2c7",
+      "type": "schema",
+      "name": "Node 49",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "979ce46e-ad2f-468e-b789-2847fd8fb152",
+      "type": "schema",
+      "name": "Node 50",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "29e7ccb0-da44-4ed1-abc0-f7db26067138",
+      "type": "schema",
+      "name": "Node 51",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "fb485571-4490-4ad6-89ef-77c0595e3abd",
+      "type": "schema",
+      "name": "Node 52",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "82e0eecb-cfa8-440e-a7bc-695f17ecd01d",
+      "type": "schema",
+      "name": "Node 53",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "347f8571-6442-4fbc-a5af-13833b1fc305",
+      "type": "schema",
+      "name": "Node 54",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "2ae2a2fb-10cc-4ada-a732-c900b8f4ae9b",
+      "type": "schema",
+      "name": "Node 55",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "9f9952b9-925c-40c0-984c-12e2adb2d51e",
+      "type": "schema",
+      "name": "Node 56",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "071aee3a-2d8c-4ca4-8e08-8acc4f72899a",
+      "type": "schema",
+      "name": "Node 57",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "869bd587-73fb-4527-8d8e-7be5d9af7d9d",
+      "type": "schema",
+      "name": "Node 58",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "586c4e0d-72a9-43f5-8c27-fc7c30ab846e",
+      "type": "schema",
+      "name": "Node 59",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "8a554413-20d9-4e2e-9cb3-a76514dcf31a",
+      "type": "schema",
+      "name": "Node 60",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "08ef21fe-d272-4f06-94fe-6c2e300a7ae3",
+      "type": "schema",
+      "name": "Node 61",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "046695a8-6928-4309-ae00-145cea884b14",
+      "type": "schema",
+      "name": "Node 62",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "b1626340-263f-4d53-96c5-3b879e9a345c",
+      "type": "schema",
+      "name": "Node 63",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "97c4ac15-faf2-4c19-b295-56fdd268b9bf",
+      "type": "schema",
+      "name": "Node 64",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "ae118eb6-6b77-42cb-8d99-63a4af0049ef",
+      "type": "schema",
+      "name": "Node 65",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "5722a24e-6c83-4a41-918f-450897497f13",
+      "type": "schema",
+      "name": "Node 66",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "05c01413-35b3-4264-874e-99c1e2e7ce9a",
+      "type": "schema",
+      "name": "Node 67",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "fd307315-594d-4806-8482-4c79a6590290",
+      "type": "schema",
+      "name": "Node 68",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "96c2169b-1de1-4653-8d3e-8d7445409cb1",
+      "type": "schema",
+      "name": "Node 69",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "ca7b089e-7aa5-45b6-ae48-9ef6df26c2b6",
+      "type": "schema",
+      "name": "Node 70",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "17c1a8a9-678e-47eb-900e-e285c15ffcc8",
+      "type": "schema",
+      "name": "Node 71",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "64c5a32d-fb55-4219-a7f1-a9a6f5bd8081",
+      "type": "schema",
+      "name": "Node 72",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "c0f7fea0-f6d2-430e-8461-27fbf179d5a9",
+      "type": "schema",
+      "name": "Node 73",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "9c82513a-e237-4ec9-9005-88e9779a4090",
+      "type": "schema",
+      "name": "Node 74",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "009d75bf-240c-465e-94ce-29d248ede116",
+      "type": "schema",
+      "name": "Node 75",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "748642e8-6667-410a-86f9-4c57e6ba7cda",
+      "type": "schema",
+      "name": "Node 76",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "882fbd22-26cf-47b8-97b3-cbba10eae32f",
+      "type": "schema",
+      "name": "Node 77",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "7283fd6b-31b6-4af9-9ea4-0d2382cc92ae",
+      "type": "schema",
+      "name": "Node 78",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "181a7c46-8f45-4875-a52d-74c281235cda",
+      "type": "schema",
+      "name": "Node 79",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "2c49b694-b7dc-4b26-ad3c-757376afb1f3",
+      "type": "schema",
+      "name": "Node 80",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "e53d2b44-04d4-4d8c-a9e8-1c804256e2c6",
+      "type": "schema",
+      "name": "Node 81",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "f96d8b17-3ea0-4bb3-9f6e-6d146466eac3",
+      "type": "schema",
+      "name": "Node 82",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "e557ed2f-82fd-460b-84c2-bf4dcf457882",
+      "type": "schema",
+      "name": "Node 83",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "a50bc3f3-c58e-4c82-865d-6678d1590451",
+      "type": "schema",
+      "name": "Node 84",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "c448ec0c-f3c6-4b39-bef8-655ff2457cfb",
+      "type": "schema",
+      "name": "Node 85",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "8a471358-006c-4a97-9a9c-0161d7b7ec80",
+      "type": "schema",
+      "name": "Node 86",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "72ce2817-64b1-45a5-b7aa-6ea19cba669b",
+      "type": "schema",
+      "name": "Node 87",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "3e94aaab-f439-4c5d-ae6d-2835d345ce0a",
+      "type": "schema",
+      "name": "Node 88",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "0317a1d8-b0e4-46db-b1e8-0216cf33d83a",
+      "type": "schema",
+      "name": "Node 89",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "4c66d3a1-523d-4e2a-bd57-d2f9167bbd1c",
+      "type": "schema",
+      "name": "Node 90",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "c511fa9e-4446-4c25-9913-82df60b48241",
+      "type": "schema",
+      "name": "Node 91",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "5164c10f-f97b-4917-bd20-f14198a2ee0e",
+      "type": "schema",
+      "name": "Node 92",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "56b97fdf-825e-4d8c-a96c-027f1ff756c6",
+      "type": "schema",
+      "name": "Node 93",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "710af3fe-8ac3-420a-bbb4-1648c56b08f5",
+      "type": "schema",
+      "name": "Node 94",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "0655e3db-589c-439c-aef6-0ed1c32c6b27",
+      "type": "schema",
+      "name": "Node 95",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "2d420dbe-80c8-4328-bc18-abc4826bc925",
+      "type": "schema",
+      "name": "Node 96",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "608fee1c-63ec-4037-a669-8a0e38966288",
+      "type": "schema",
+      "name": "Node 97",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "0e1c86a5-9b05-4ba7-97e8-18f8ce70fcff",
+      "type": "schema",
+      "name": "Node 98",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "bdf64c80-e6c7-4e1b-b5d5-3c8051a161fd",
+      "type": "schema",
+      "name": "Node 99",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "e2fc3116-f4db-4e31-b706-5f10c19b5409",
+      "type": "schema",
+      "name": "Node 100",
+      "path": [
+        {
+          "id": "1b6652d6-4150-4988-b123-93a60bcd08ab",
+          "name": "DB2",
+          "type": "technology"
+        },
+        {
+          "id": "0f9e9bd3-44d2-480b-92a0-24b1b3096363",
+          "name": "Database2",
+          "type": "database"
+        }
+      ],
+      "dqScore": 90,
+      "slaFails": 0,
+      "tags": [
+        "60%",
+        "SLA",
+        "PII"
+      ],
+      "businessTerms": {
+        "data": [
+          {
+            "id": "1ee38e20-e827-41b4-994e-13f8028a6c4d",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_1"
+          },
+          {
+            "id": "a2573e64-304b-40b1-a7b8-98a644abd1b5",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_2"
+          },
+          {
+            "id": "7bb8a32e-d5fb-4f71-895d-f6fb925b7743",
+            "value": "ONLY_LONG_TERM_TEXT_TEST_3"
+          }
+        ],
+        "count": 3
+      }
+    }
+  ],
+  "edges": [
+    {
+      "sourceId": "62ee9905-e48f-4b0c-b1ff-6ec565e67524",
+      "targetId": "4585de25-bf70-49e1-a151-135ff528f4dc"
+    },
+    {
+      "sourceId": "62ee9905-e48f-4b0c-b1ff-6ec565e67524",
+      "targetId": "f7c8e0c2-bf36-4695-b84b-669c5c083b27"
+    },
+    {
+      "sourceId": "4585de25-bf70-49e1-a151-135ff528f4dc",
+      "targetId": "f73b49ac-d8fc-4b57-8a5a-e5cde092cde3"
+    },
+    {
+      "sourceId": "f7c8e0c2-bf36-4695-b84b-669c5c083b27",
+      "targetId": "3da5003b-3596-44c5-87e5-c513732268c3"
+    },
+    {
+      "sourceId": "f7c8e0c2-bf36-4695-b84b-669c5c083b27",
+      "targetId": "7f70d0da-cfc7-439a-8ef9-176b03c21069"
+    },
+    {
+      "sourceId": "f7c8e0c2-bf36-4695-b84b-669c5c083b27",
+      "targetId": "bf66eb2e-76a9-4e45-9523-db4c734173ad"
+    },
+    {
+      "sourceId": "3da5003b-3596-44c5-87e5-c513732268c3",
+      "targetId": "4d222ed4-deab-442a-bdf3-f5d304855e36"
+    },
+    {
+      "sourceId": "3da5003b-3596-44c5-87e5-c513732268c3",
+      "targetId": "532cdb15-c6df-4b64-ad11-0035fd2b71f9"
+    },
+    {
+      "sourceId": "4d222ed4-deab-442a-bdf3-f5d304855e36",
+      "targetId": "f956df0e-53ab-450f-ad37-b0845a96bc50"
+    },
+    {
+      "sourceId": "3da5003b-3596-44c5-87e5-c513732268c3",
+      "targetId": "1a6926f0-9eba-4e24-a39e-0308581205af"
+    },
+    {
+      "sourceId": "3da5003b-3596-44c5-87e5-c513732268c3",
+      "targetId": "1ddeab98-6f7f-47ff-9db9-ba459c87dcbf"
+    },
+    {
+      "sourceId": "3da5003b-3596-44c5-87e5-c513732268c3",
+      "targetId": "73abfbb3-0569-4ce8-a255-8b21a11b7809"
+    },
+    {
+      "sourceId": "3da5003b-3596-44c5-87e5-c513732268c3",
+      "targetId": "9e5f2d56-7888-4dca-ad24-7aa4a88b50e5"
+    },
+    {
+      "sourceId": "532cdb15-c6df-4b64-ad11-0035fd2b71f9",
+      "targetId": "3bcb31aa-cd63-4f0b-8499-0dbca5a1e6a4"
+    },
+    {
+      "sourceId": "532cdb15-c6df-4b64-ad11-0035fd2b71f9",
+      "targetId": "6024e2e6-43c3-4348-8edb-4028e41413b4"
+    },
+    {
+      "sourceId": "532cdb15-c6df-4b64-ad11-0035fd2b71f9",
+      "targetId": "ad7911d4-0134-432b-b676-cf21e8cc910f"
+    },
+    {
+      "sourceId": "73abfbb3-0569-4ce8-a255-8b21a11b7809",
+      "targetId": "f114cfb8-2542-4ce0-be9d-910f3bf9acbf"
+    },
+    {
+      "sourceId": "73abfbb3-0569-4ce8-a255-8b21a11b7809",
+      "targetId": "8b587d50-e119-47f1-99f9-6955371aa589"
+    },
+    {
+      "sourceId": "73abfbb3-0569-4ce8-a255-8b21a11b7809",
+      "targetId": "4cef5383-da94-42c3-a0aa-9ba579efa9ac"
+    },
+    {
+      "sourceId": "7f70d0da-cfc7-439a-8ef9-176b03c21069",
+      "targetId": "580f6463-4896-4f6a-9f6c-87a740db2fb3"
+    },
+    {
+      "sourceId": "3bcb31aa-cd63-4f0b-8499-0dbca5a1e6a4",
+      "targetId": "a5e0407e-9777-44ff-9919-85793b61ef5a"
+    },
+    {
+      "sourceId": "4d222ed4-deab-442a-bdf3-f5d304855e36",
+      "targetId": "ba2a25de-c7ed-447c-9036-654521ec95e4"
+    },
+    {
+      "sourceId": "1ddeab98-6f7f-47ff-9db9-ba459c87dcbf",
+      "targetId": "f6e7da95-a11b-4ef0-bb3a-02f315b700ea"
+    },
+    {
+      "sourceId": "580f6463-4896-4f6a-9f6c-87a740db2fb3",
+      "targetId": "65db5dca-11a2-4514-8f6e-67b5e5d9d021"
+    },
+    {
+      "sourceId": "8b587d50-e119-47f1-99f9-6955371aa589",
+      "targetId": "4f80c119-95c6-48cf-a8d2-30ef96cdaa98"
+    },
+    {
+      "sourceId": "532cdb15-c6df-4b64-ad11-0035fd2b71f9",
+      "targetId": "2919e175-bdb7-402c-8f29-391a40ea0aff"
+    },
+    {
+      "sourceId": "8b587d50-e119-47f1-99f9-6955371aa589",
+      "targetId": "7fa6d188-89d7-4baf-a416-bef31503c51c"
+    },
+    {
+      "sourceId": "f114cfb8-2542-4ce0-be9d-910f3bf9acbf",
+      "targetId": "081d510c-c9ae-45a0-838d-d6e63eafdde3"
+    },
+    {
+      "sourceId": "081d510c-c9ae-45a0-838d-d6e63eafdde3",
+      "targetId": "1a061369-b308-442f-b685-3d6bb44b2cec"
+    },
+    {
+      "sourceId": "532cdb15-c6df-4b64-ad11-0035fd2b71f9",
+      "targetId": "67731e8f-400b-4199-b837-6a87e4d6d7c1"
+    },
+    {
+      "sourceId": "65db5dca-11a2-4514-8f6e-67b5e5d9d021",
+      "targetId": "8e2745a3-9269-4a7e-8a3e-bf3f4b89f063"
+    },
+    {
+      "sourceId": "8b587d50-e119-47f1-99f9-6955371aa589",
+      "targetId": "9b504f32-e2f5-4790-a9ea-0ed3b9840edd"
+    },
+    {
+      "sourceId": "8b587d50-e119-47f1-99f9-6955371aa589",
+      "targetId": "a523d1fd-8aa6-4a8e-8f07-589e17c61d06"
+    },
+    {
+      "sourceId": "f6e7da95-a11b-4ef0-bb3a-02f315b700ea",
+      "targetId": "d539af99-dd2e-4c18-beaa-9118edd1c7c3"
+    },
+    {
+      "sourceId": "8b587d50-e119-47f1-99f9-6955371aa589",
+      "targetId": "eb7297ae-6988-4850-aba1-8c11af5e498d"
+    },
+    {
+      "sourceId": "8b587d50-e119-47f1-99f9-6955371aa589",
+      "targetId": "0f0680f5-e1ad-44d9-a587-ccfe23ea3f2d"
+    },
+    {
+      "sourceId": "9b504f32-e2f5-4790-a9ea-0ed3b9840edd",
+      "targetId": "969f210b-a3ed-41c6-8142-d7edaffc2b58"
+    },
+    {
+      "sourceId": "1ddeab98-6f7f-47ff-9db9-ba459c87dcbf",
+      "targetId": "eafb008d-f7de-4fdb-b536-bafb345d00d5"
+    },
+    {
+      "sourceId": "d539af99-dd2e-4c18-beaa-9118edd1c7c3",
+      "targetId": "953fa613-909a-4618-a6df-43720faa258d"
+    },
+    {
+      "sourceId": "953fa613-909a-4618-a6df-43720faa258d",
+      "targetId": "1d15da31-8862-4f74-a04c-8e3637eaf4a0"
+    },
+    {
+      "sourceId": "3bcb31aa-cd63-4f0b-8499-0dbca5a1e6a4",
+      "targetId": "b148b1b5-5f63-4784-b9a1-3b30738ec86c"
+    },
+    {
+      "sourceId": "1ddeab98-6f7f-47ff-9db9-ba459c87dcbf",
+      "targetId": "f2232365-65ed-45e9-947c-db0c819f3dc9"
+    },
+    {
+      "sourceId": "a5e0407e-9777-44ff-9919-85793b61ef5a",
+      "targetId": "a89e2dfc-53cb-4d0d-b434-bf21706c002c"
+    },
+    {
+      "sourceId": "f6e7da95-a11b-4ef0-bb3a-02f315b700ea",
+      "targetId": "d8fdf108-7909-400e-bfd0-dd21318a51ea"
+    },
+    {
+      "sourceId": "953fa613-909a-4618-a6df-43720faa258d",
+      "targetId": "6960742f-1047-4ba6-b77c-5dcc43945138"
+    },
+    {
+      "sourceId": "ba2a25de-c7ed-447c-9036-654521ec95e4",
+      "targetId": "c85ccb21-9931-45ff-8a57-b0a71344aaf5"
+    },
+    {
+      "sourceId": "081d510c-c9ae-45a0-838d-d6e63eafdde3",
+      "targetId": "bfdd0eac-6bb7-4dd6-a463-72bb11e1f065"
+    },
+    {
+      "sourceId": "9b504f32-e2f5-4790-a9ea-0ed3b9840edd",
+      "targetId": "3609d6ad-3486-4373-a728-782fdbf3e2c7"
+    },
+    {
+      "sourceId": "eafb008d-f7de-4fdb-b536-bafb345d00d5",
+      "targetId": "979ce46e-ad2f-468e-b789-2847fd8fb152"
+    },
+    {
+      "sourceId": "580f6463-4896-4f6a-9f6c-87a740db2fb3",
+      "targetId": "29e7ccb0-da44-4ed1-abc0-f7db26067138"
+    },
+    {
+      "sourceId": "580f6463-4896-4f6a-9f6c-87a740db2fb3",
+      "targetId": "fb485571-4490-4ad6-89ef-77c0595e3abd"
+    },
+    {
+      "sourceId": "580f6463-4896-4f6a-9f6c-87a740db2fb3",
+      "targetId": "82e0eecb-cfa8-440e-a7bc-695f17ecd01d"
+    },
+    {
+      "sourceId": "67731e8f-400b-4199-b837-6a87e4d6d7c1",
+      "targetId": "347f8571-6442-4fbc-a5af-13833b1fc305"
+    },
+    {
+      "sourceId": "7fa6d188-89d7-4baf-a416-bef31503c51c",
+      "targetId": "2ae2a2fb-10cc-4ada-a732-c900b8f4ae9b"
+    },
+    {
+      "sourceId": "7fa6d188-89d7-4baf-a416-bef31503c51c",
+      "targetId": "9f9952b9-925c-40c0-984c-12e2adb2d51e"
+    },
+    {
+      "sourceId": "3bcb31aa-cd63-4f0b-8499-0dbca5a1e6a4",
+      "targetId": "071aee3a-2d8c-4ca4-8e08-8acc4f72899a"
+    },
+    {
+      "sourceId": "7fa6d188-89d7-4baf-a416-bef31503c51c",
+      "targetId": "869bd587-73fb-4527-8d8e-7be5d9af7d9d"
+    },
+    {
+      "sourceId": "f2232365-65ed-45e9-947c-db0c819f3dc9",
+      "targetId": "586c4e0d-72a9-43f5-8c27-fc7c30ab846e"
+    },
+    {
+      "sourceId": "7fa6d188-89d7-4baf-a416-bef31503c51c",
+      "targetId": "8a554413-20d9-4e2e-9cb3-a76514dcf31a"
+    },
+    {
+      "sourceId": "7fa6d188-89d7-4baf-a416-bef31503c51c",
+      "targetId": "08ef21fe-d272-4f06-94fe-6c2e300a7ae3"
+    },
+    {
+      "sourceId": "7fa6d188-89d7-4baf-a416-bef31503c51c",
+      "targetId": "046695a8-6928-4309-ae00-145cea884b14"
+    },
+    {
+      "sourceId": "b148b1b5-5f63-4784-b9a1-3b30738ec86c",
+      "targetId": "b1626340-263f-4d53-96c5-3b879e9a345c"
+    },
+    {
+      "sourceId": "a523d1fd-8aa6-4a8e-8f07-589e17c61d06",
+      "targetId": "97c4ac15-faf2-4c19-b295-56fdd268b9bf"
+    },
+    {
+      "sourceId": "a523d1fd-8aa6-4a8e-8f07-589e17c61d06",
+      "targetId": "ae118eb6-6b77-42cb-8d99-63a4af0049ef"
+    },
+    {
+      "sourceId": "9b504f32-e2f5-4790-a9ea-0ed3b9840edd",
+      "targetId": "5722a24e-6c83-4a41-918f-450897497f13"
+    },
+    {
+      "sourceId": "3609d6ad-3486-4373-a728-782fdbf3e2c7",
+      "targetId": "05c01413-35b3-4264-874e-99c1e2e7ce9a"
+    },
+    {
+      "sourceId": "3609d6ad-3486-4373-a728-782fdbf3e2c7",
+      "targetId": "fd307315-594d-4806-8482-4c79a6590290"
+    },
+    {
+      "sourceId": "0f0680f5-e1ad-44d9-a587-ccfe23ea3f2d",
+      "targetId": "96c2169b-1de1-4653-8d3e-8d7445409cb1"
+    },
+    {
+      "sourceId": "ba2a25de-c7ed-447c-9036-654521ec95e4",
+      "targetId": "ca7b089e-7aa5-45b6-ae48-9ef6df26c2b6"
+    },
+    {
+      "sourceId": "d8fdf108-7909-400e-bfd0-dd21318a51ea",
+      "targetId": "17c1a8a9-678e-47eb-900e-e285c15ffcc8"
+    },
+    {
+      "sourceId": "5722a24e-6c83-4a41-918f-450897497f13",
+      "targetId": "64c5a32d-fb55-4219-a7f1-a9a6f5bd8081"
+    },
+    {
+      "sourceId": "5722a24e-6c83-4a41-918f-450897497f13",
+      "targetId": "c0f7fea0-f6d2-430e-8461-27fbf179d5a9"
+    },
+    {
+      "sourceId": "eafb008d-f7de-4fdb-b536-bafb345d00d5",
+      "targetId": "9c82513a-e237-4ec9-9005-88e9779a4090"
+    },
+    {
+      "sourceId": "8a554413-20d9-4e2e-9cb3-a76514dcf31a",
+      "targetId": "009d75bf-240c-465e-94ce-29d248ede116"
+    },
+    {
+      "sourceId": "c85ccb21-9931-45ff-8a57-b0a71344aaf5",
+      "targetId": "748642e8-6667-410a-86f9-4c57e6ba7cda"
+    },
+    {
+      "sourceId": "1a061369-b308-442f-b685-3d6bb44b2cec",
+      "targetId": "882fbd22-26cf-47b8-97b3-cbba10eae32f"
+    },
+    {
+      "sourceId": "1a061369-b308-442f-b685-3d6bb44b2cec",
+      "targetId": "7283fd6b-31b6-4af9-9ea4-0d2382cc92ae"
+    },
+    {
+      "sourceId": "1a061369-b308-442f-b685-3d6bb44b2cec",
+      "targetId": "181a7c46-8f45-4875-a52d-74c281235cda"
+    },
+    {
+      "sourceId": "29e7ccb0-da44-4ed1-abc0-f7db26067138",
+      "targetId": "2c49b694-b7dc-4b26-ad3c-757376afb1f3"
+    },
+    {
+      "sourceId": "29e7ccb0-da44-4ed1-abc0-f7db26067138",
+      "targetId": "e53d2b44-04d4-4d8c-a9e8-1c804256e2c6"
+    },
+    {
+      "sourceId": "7fa6d188-89d7-4baf-a416-bef31503c51c",
+      "targetId": "f96d8b17-3ea0-4bb3-9f6e-6d146466eac3"
+    },
+    {
+      "sourceId": "fd307315-594d-4806-8482-4c79a6590290",
+      "targetId": "e557ed2f-82fd-460b-84c2-bf4dcf457882"
+    },
+    {
+      "sourceId": "eafb008d-f7de-4fdb-b536-bafb345d00d5",
+      "targetId": "a50bc3f3-c58e-4c82-865d-6678d1590451"
+    },
+    {
+      "sourceId": "eafb008d-f7de-4fdb-b536-bafb345d00d5",
+      "targetId": "c448ec0c-f3c6-4b39-bef8-655ff2457cfb"
+    },
+    {
+      "sourceId": "979ce46e-ad2f-468e-b789-2847fd8fb152",
+      "targetId": "8a471358-006c-4a97-9a9c-0161d7b7ec80"
+    },
+    {
+      "sourceId": "fb485571-4490-4ad6-89ef-77c0595e3abd",
+      "targetId": "72ce2817-64b1-45a5-b7aa-6ea19cba669b"
+    },
+    {
+      "sourceId": "fb485571-4490-4ad6-89ef-77c0595e3abd",
+      "targetId": "3e94aaab-f439-4c5d-ae6d-2835d345ce0a"
+    },
+    {
+      "sourceId": "046695a8-6928-4309-ae00-145cea884b14",
+      "targetId": "0317a1d8-b0e4-46db-b1e8-0216cf33d83a"
+    },
+    {
+      "sourceId": "046695a8-6928-4309-ae00-145cea884b14",
+      "targetId": "4c66d3a1-523d-4e2a-bd57-d2f9167bbd1c"
+    },
+    {
+      "sourceId": "046695a8-6928-4309-ae00-145cea884b14",
+      "targetId": "c511fa9e-4446-4c25-9913-82df60b48241"
+    },
+    {
+      "sourceId": "1a061369-b308-442f-b685-3d6bb44b2cec",
+      "targetId": "5164c10f-f97b-4917-bd20-f14198a2ee0e"
+    },
+    {
+      "sourceId": "1a061369-b308-442f-b685-3d6bb44b2cec",
+      "targetId": "56b97fdf-825e-4d8c-a96c-027f1ff756c6"
+    },
+    {
+      "sourceId": "1a061369-b308-442f-b685-3d6bb44b2cec",
+      "targetId": "710af3fe-8ac3-420a-bbb4-1648c56b08f5"
+    },
+    {
+      "sourceId": "ca7b089e-7aa5-45b6-ae48-9ef6df26c2b6",
+      "targetId": "0655e3db-589c-439c-aef6-0ed1c32c6b27"
+    },
+    {
+      "sourceId": "710af3fe-8ac3-420a-bbb4-1648c56b08f5",
+      "targetId": "2d420dbe-80c8-4328-bc18-abc4826bc925"
+    },
+    {
+      "sourceId": "96c2169b-1de1-4653-8d3e-8d7445409cb1",
+      "targetId": "608fee1c-63ec-4037-a669-8a0e38966288"
+    },
+    {
+      "sourceId": "96c2169b-1de1-4653-8d3e-8d7445409cb1",
+      "targetId": "0e1c86a5-9b05-4ba7-97e8-18f8ce70fcff"
+    },
+    {
+      "sourceId": "96c2169b-1de1-4653-8d3e-8d7445409cb1",
+      "targetId": "bdf64c80-e6c7-4e1b-b5d5-3c8051a161fd"
+    },
+    {
+      "sourceId": "081d510c-c9ae-45a0-838d-d6e63eafdde3",
+      "targetId": "e2fc3116-f4db-4e31-b706-5f10c19b5409"
+    }
+  ]
+}
