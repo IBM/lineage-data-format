@@ -786,6 +786,115 @@ class TestLosslessnessEdgeCases:
 
 
 # ---------------------------------------------------------------------------
+# TestTagsAndTypeEncoding — covers Problems 1/2/3 found in second audit
+# ---------------------------------------------------------------------------
+
+class TestTagsAndTypeEncoding:
+    """Regression tests for tag, type and name encoding bugs found in second audit."""
+
+    # ------------------------------------------------------------------
+    # Problem 1 — tag containing comma
+    # ------------------------------------------------------------------
+    def test_tag_with_comma(self):
+        """Tag containing ',' must not be split into multiple tags."""
+        graph = _single_asset({"tags": ["normal", "tag,with,comma"]})
+        result = round_trip(graph)
+        assert result["assets_in_view"][0]["tags"] == ["normal", "tag,with,comma"]
+
+    # ------------------------------------------------------------------
+    # Problem 1+D — tag containing space
+    # ------------------------------------------------------------------
+    def test_tag_with_space(self):
+        """Tag containing space must not corrupt the N: line token parsing."""
+        graph = _single_asset({"tags": ["PII", "tag with space", "another"]})
+        result = round_trip(graph)
+        assert result["assets_in_view"][0]["tags"] == ["PII", "tag with space", "another"]
+
+    # ------------------------------------------------------------------
+    # Problem B — tag containing square brackets
+    # ------------------------------------------------------------------
+    def test_tag_with_brackets(self):
+        """Tag containing '[' or ']' must survive strip('[]') in parser."""
+        graph = _single_asset({"tags": ["tag[bracket]", "normal"]})
+        result = round_trip(graph)
+        assert result["assets_in_view"][0]["tags"] == ["tag[bracket]", "normal"]
+
+    def test_tag_with_percent(self):
+        """Tag containing '%' must survive percent-encoding round-trip."""
+        graph = _single_asset({"tags": ["50%off", "100%"]})
+        result = round_trip(graph)
+        assert result["assets_in_view"][0]["tags"] == ["50%off", "100%"]
+
+    def test_tags_all_special_chars_combined(self):
+        """Tags combining comma, space, brackets, percent must all round-trip."""
+        tags = [
+            "PII",
+            "tag with space",
+            "tag,with,comma",
+            "tag[bracket]",
+            "50%off",
+            "a=b",
+            "x|y",
+        ]
+        graph = _single_asset({"tags": tags})
+        result = round_trip(graph)
+        assert result["assets_in_view"][0]["tags"] == tags
+
+    # ------------------------------------------------------------------
+    # Problem 2 — node type containing space
+    # ------------------------------------------------------------------
+    def test_type_with_space(self):
+        """Asset type containing space must round-trip unchanged."""
+        graph = _single_asset({"type": "My Type"})
+        result = round_trip(graph)
+        assert result["assets_in_view"][0]["type"] == "My Type"
+
+    def test_type_with_special_chars(self):
+        """Asset type with comma, percent, brackets must round-trip."""
+        graph = _single_asset({"type": "Type[v2],50%"})
+        result = round_trip(graph)
+        assert result["assets_in_view"][0]["type"] == "Type[v2],50%"
+
+    # ------------------------------------------------------------------
+    # Problem 3 — asset name containing newline
+    # ------------------------------------------------------------------
+    def test_name_with_newline(self):
+        """Asset name containing newline must not be split across NAME: section lines."""
+        graph = _single_asset({"name": "name\nwith\nnewline"})
+        result = round_trip(graph)
+        assert result["assets_in_view"][0]["name"] == "name\nwith\nnewline"
+
+    def test_name_with_equals(self):
+        """Asset name containing '=' must round-trip (parse_dict uses find('='))."""
+        graph = _single_asset({"name": "col=alias"})
+        result = round_trip(graph)
+        assert result["assets_in_view"][0]["name"] == "col=alias"
+
+    def test_name_with_all_special_chars(self):
+        """Asset name with all structural chars must round-trip."""
+        name = "n=a,m[e] w|ith\nall%chars"
+        graph = _single_asset({"name": name})
+        result = round_trip(graph)
+        assert result["assets_in_view"][0]["name"] == name
+
+    # ------------------------------------------------------------------
+    # Combined: type+name+tags all special at once
+    # ------------------------------------------------------------------
+    def test_combined_tags_type_name(self):
+        """Type with space, name with newline, tags with commas — simultaneously."""
+        graph = _single_asset({
+            "type": "Custom Type",
+            "name": "my\ncol",
+            "tags": ["tag,a", "tag b", "tag[c]", "50%"],
+        })
+        result = round_trip(graph)
+        a = result["assets_in_view"][0]
+        assert a["type"] == "Custom Type"
+        assert a["name"] == "my\ncol"
+        assert a["tags"] == ["tag,a", "tag b", "tag[c]", "50%"]
+
+
+# ---------------------------------------------------------------------------
 # TestFileConversion
 # ---------------------------------------------------------------------------
 
