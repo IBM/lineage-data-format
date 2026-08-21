@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.11", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install package with dev dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Run tests
+        run: pytest --tb=short -q
+
+  install-from-git:
+    name: Smoke-test pip install from git
+    runs-on: ubuntu-latest
+    # Only run on push to main (not on every PR to avoid rate limits)
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install from local path (simulates git+ install)
+        run: pip install .
+
+      - name: Verify public API is importable
+        run: |
+          python - <<'EOF'
+          from ldf import (
+              json_to_lineage_format,
+              lineage_format_to_json,
+              convert_json_file_to_lineage,
+              convert_lineage_file_to_json,
+          )
+          import ldf
+          print(f"ldf {ldf.__version__} imported successfully")
+
+          # Quick round-trip smoke test
+          graph = {
+              "assets_in_view": [{
+                  "id": "a" * 64,
+                  "name": "test_col",
+                  "type": "Column",
+                  "attributes": [],
+                  "source_code_snippets": [],
+                  "business_classifications": [],
+                  "business_terms": [],
+                  "catalog_assignments": [],
+                  "children": {"count": 0, "has_any": False, "href": ""},
+                  "hierarchical_path": [],
+                  "data_classes": [],
+                  "is_deduced": False,
+                  "is_transforming": False,
+                  "is_operational": False,
+                  "is_temporary": False,
+                  "is_favorite": False,
+                  "identity_key": None,
+                  "origin": "runtime",
+                  "project_assignments": [],
+                  "resource_key": "DB/col",
+                  "space_assignments": [],
+                  "tags": ["PII"],
+              }],
+              "edges_in_view": [],
+          }
+          ldf_text = json_to_lineage_format(graph)
+          restored = lineage_format_to_json(ldf_text)
+          assert restored["assets_in_view"][0]["id"] == "a" * 64
+          assert restored["assets_in_view"][0]["tags"] == ["PII"]
+          print("Round-trip smoke test passed")
+          EOF

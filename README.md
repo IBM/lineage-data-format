@@ -1,19 +1,30 @@
 # Lineage Definition Format (LDF)
 
+[![CI](https://github.com/IBM/lineage-data-format/actions/workflows/ci.yml/badge.svg)](https://github.com/IBM/lineage-data-format/actions/workflows/ci.yml)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
+
 A Python library for converting between the backend `LineageGraph` JSON schema and a compact, token-optimized lineage definition format.
 
 ## Installation
 
+Install directly from GitHub:
+
 ```bash
-pip install ldf
+pip install git+https://github.com/IBM/lineage-data-format.git
 ```
 
-Or install from source:
+Pin to a specific release:
 
 ```bash
-git clone <repository-url>
+pip install git+https://github.com/IBM/lineage-data-format.git@v0.1.0
+```
+
+Install from source for development:
+
+```bash
+git clone https://github.com/IBM/lineage-data-format.git
 cd lineage-data-format
-pip install -e .
+pip install -e ".[dev]"
 ```
 
 ## Input Schema

@@ -1,84 +1,70 @@
 # Installation Guide
 
-## For Users
-
-### Using pip (recommended)
+## Install from GitHub (recommended)
 
 ```bash
-pip install ldf
+pip install git+https://github.com/IBM/lineage-data-format.git
 ```
 
-### From source
+Pin to a specific release tag:
 
 ```bash
-git clone <repository-url>
+pip install git+https://github.com/IBM/lineage-data-format.git@v0.1.0
+```
+
+## Install from source (development)
+
+```bash
+git clone https://github.com/IBM/lineage-data-format.git
 cd lineage-data-format
-pip install .
-```
 
-## For Development
-
-### Setup virtual environment
-
-```bash
 # Create virtual environment
-python3 -m venv venv
-
-# Activate virtual environment
-# On macOS/Linux:
-source venv/bin/activate
-# On Windows:
-venv\Scripts\activate
+python3 -m venv .venv
+source .venv/bin/activate      # Windows: .venv\Scripts\activate
 
 # Install in editable mode with dev dependencies
 pip install -e ".[dev]"
 ```
 
-### Running tests
+## Verify installation
+
+```python
+from ldf import json_to_lineage_format, lineage_format_to_json
+print("LDF installed successfully")
+```
+
+Or from the CLI:
+
+```bash
+ldf --help
+```
+
+## Running tests
 
 ```bash
 pytest
+pytest --cov=ldf   # with coverage
 ```
 
-### Running the example
+## Requirements
 
-```bash
-python examples/basic_usage.py
-```
-
-## Using the CLI
-
-After installation, the `ldf` command will be available:
-
-```bash
-# Convert JSON to lineage format
-ldf json-to-lineage input.json output.ldf
-
-# Convert lineage format to JSON
-ldf lineage-to-json input.ldf output.json
-```
+- Python 3.9 or newer
+- No external runtime dependencies
 
 ## Troubleshooting
 
-### "externally-managed-environment" error
+### "externally-managed-environment" error on macOS/Linux
 
-If you see this error on macOS/Linux, you need to use a virtual environment:
+Use a virtual environment:
 
 ```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install ldf
+python3 -m venv .venv
+source .venv/bin/activate
+pip install git+https://github.com/IBM/lineage-data-format.git
 ```
 
-### Import errors
-
-Make sure the package is installed:
+### Verify the package is installed
 
 ```bash
-pip list | grep ldf
+pip show lineage-data-format
 ```
-
-If not installed, run:
-
-```bash
-pip install -e .
