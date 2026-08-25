@@ -239,8 +239,9 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
         hp_items = asset.get("hierarchical_path") or []
         if hp_items:
             def _encode_hp_field(s: str) -> str:
-                s = s.replace("%", "%25")
-                s = s.replace("|", "%7C")
+                # Full structural encoding via pct_encode, then also encode ":"
+                # which pct_encode leaves alone (it's only structural in HP segments).
+                s = pct_encode(s)
                 s = s.replace(":", "%3A")
                 return s
             def _encode_hp_segment(h: Dict[str, Any]) -> str:
@@ -280,7 +281,7 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
         # --- DSD section
         dsd = asset.get("data_source_definition_asset")
         if dsd:
-            dsd_entries[alias] = f"{dsd['id']}:{dsd.get('name','')}"
+            dsd_entries[alias] = f"{dsd['id']}:{pct_encode(dsd.get('name', ''))}"
 
     # ------------------------------------------------------------------ GRAPH section
 
@@ -628,7 +629,7 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
             if colon != -1:
                 data_source_definition_asset = {
                     "id": DSD[alias][:colon],
-                    "name": DSD[alias][colon + 1:],
+                    "name": pct_decode(DSD[alias][colon + 1:]),
                 }
 
         asset: Dict[str, Any] = {

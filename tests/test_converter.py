@@ -925,3 +925,112 @@ class TestFileConversion:
             assert restored["graph_calculation_timestamp"] == 1721636182694
 
 # Made with Bob
+
+
+class TestEncodingRegressions:
+    """Regression tests for DSD name encoding and HP field encoding bugs."""
+
+    def _make_graph(self, asset_overrides=None):
+        """Minimal single-asset graph for round-trip tests."""
+        asset = {
+            "id": "aaaa0000-0000-0000-0000-000000000001",
+            "name": "col1",
+            "type": "Column",
+            "attributes": [],
+            "source_code_snippets": [],
+            "business_classifications": [],
+            "business_terms": [],
+            "catalog_assignments": [],
+            "children": {"count": 0, "has_any": False, "href": "https://example.com/children"},
+            "hierarchical_path": [],
+            "data_classes": [],
+            "is_deduced": False,
+            "is_transforming": False,
+            "is_operational": False,
+            "is_temporary": False,
+            "is_favorite": False,
+            "identity_key": None,
+            "origin": "runtime",
+            "project_assignments": [],
+            "resource_key": None,
+            "space_assignments": [],
+            "tags": [],
+        }
+        if asset_overrides:
+            asset.update(asset_overrides)
+        return {
+            "assets_in_view": [asset],
+            "edges_in_view": [],
+        }
+
+    def _roundtrip(self, graph):
+        ldf = json_to_lineage_format(graph)
+        restored = lineage_format_to_json(ldf)
+        return restored["assets_in_view"][0]
+
+    # --- DSD name encoding ---
+
+    def test_dsd_name_with_colon(self):
+        graph = self._make_graph({
+            "data_source_definition_asset": {
+                "id": "dsd-0000-0000-0000-000000000001",
+                "name": "My:Database",
+            }
+        })
+        asset = self._roundtrip(graph)
+        assert asset["data_source_definition_asset"]["name"] == "My:Database"
+
+    def test_dsd_name_with_all_structural_chars(self):
+        graph = self._make_graph({
+            "data_source_definition_asset": {
+                "id": "dsd-0000-0000-0000-000000000002",
+                "name": "DSD|name=value space\nnewline:colon",
+            }
+        })
+        asset = self._roundtrip(graph)
+        assert asset["data_source_definition_asset"]["name"] == "DSD|name=value space\nnewline:colon"
+
+    # --- HP name/type encoding ---
+
+    def test_hp_name_with_space(self):
+        graph = self._make_graph({
+            "hierarchical_path": [
+                {"id": "hp-id-0001", "name": "My Schema", "type": "Schema"},
+            ]
+        })
+        asset = self._roundtrip(graph)
+        assert asset["hierarchical_path"][0]["name"] == "My Schema"
+
+    def test_hp_name_with_equals(self):
+        graph = self._make_graph({
+            "hierarchical_path": [
+                {"id": "hp-id-0002", "name": "key=value", "type": "Table"},
+            ]
+        })
+        asset = self._roundtrip(graph)
+        assert asset["hierarchical_path"][0]["name"] == "key=value"
+
+    def test_hp_name_with_newline(self):
+        graph = self._make_graph({
+            "hierarchical_path": [
+                {"id": "hp-id-0003", "name": "line1\nline2", "type": "Database"},
+            ]
+        })
+        asset = self._roundtrip(graph)
+        assert asset["hierarchical_path"][0]["name"] == "line1\nline2"
+
+    def test_hp_name_and_type_with_all_structural_chars(self):
+        graph = self._make_graph({
+            "hierarchical_path": [
+                {
+                    "id": "hp-id-0004",
+                    "name": "name|with:all=chars space,comma[bracket]\nnewline",
+                    "type": "type|colon:eq=space ,[\nnl",
+                },
+            ]
+        })
+        asset = self._roundtrip(graph)
+        hp = asset["hierarchical_path"][0]
+        assert hp["name"] == "name|with:all=chars space,comma[bracket]\nnewline"
+        assert hp["type"] == "type|colon:eq=space ,[\nnl"
+
