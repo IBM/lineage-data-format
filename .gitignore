@@ -21,6 +21,7 @@ wheels/
 *.egg
 
 # Virtual environments
+.venv/
 venv/
 env/
 ENV/
@@ -42,14 +43,15 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
-# Project specific
-*.ldf
-*.json
-!examples/*.json
-!examples/mock_*.json
-
-# Test outputs
+# LDF and JSON outputs (generated artefacts — not source files)
+# Allow: examples/mock_backend_response.json  (committed example input)
+# Allow: examples/output_backend.ldf          (committed example output)
+# Exclude: any other generated outputs in examples/
 examples/output_*.ldf
 examples/restored_*.json
+
+# Exclude loose JSON/LDF files in root and other dirs (not examples/)
+*.json
+!examples/mock_backend_response.json
 
 # Made with Bob

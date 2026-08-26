@@ -1,132 +1,74 @@
 # Project Structure
 
-This document describes the structure of the Lineage Definition Format (LDF) Python library.
-
 ## Directory Layout
 
 ```
 lineage-data-format/
 ├── src/ldf/                          # Main package source
-│   ├── __init__.py                   # Public API exports
-│   ├── converter.py                  # Core conversion functions
+│   ├── __init__.py                   # Public API exports and version
+│   ├── converter.py                  # Core serializer / deserializer
 │   └── cli.py                        # Command-line interface
 │
-├── examples/                         # Usage examples and test data
-│   ├── basic_usage.py                # Simple API usage example
-│   ├── convert_example.py            # Real data conversion example
-│   ├── mock_50_nodes_linear_edges.json    # Test data (50 nodes)
-│   └── mock_100_nodes_combined_edges.json # Test data (100 nodes)
+├── examples/                         # Usage examples and reference data
+│   ├── mock_backend_response.json    # Sample backend LineageGraph JSON
+│   └── output_backend.ldf            # LDF output for the sample above
 │
 ├── tests/                            # Test suite
 │   ├── __init__.py
-│   └── test_converter.py             # Comprehensive converter tests
+│   └── test_converter.py             # Comprehensive converter tests (64 tests)
 │
-├── pyproject.toml                    # Package configuration
+├── .github/workflows/ci.yml          # GitHub Actions CI
+├── pyproject.toml                    # Package configuration (hatchling)
+├── CHANGELOG.md                      # Version history
 ├── README.md                         # Main documentation
 ├── INSTALL.md                        # Installation guide
-├── LICENSE                           # License file
-└── .gitignore                        # Git ignore rules
+└── LICENSE                           # Apache 2.0 license
 ```
 
-## Module Overview
+## Public API
+
+### `from ldf import ...`
+
+| Function | Description |
+|---|---|
+| `json_to_lineage_format(graph, options)` | Convert backend `LineageGraph` dict → LDF string |
+| `lineage_format_to_json(input_text)` | Convert LDF string → backend `LineageGraph` dict |
+| `convert_json_file_to_lineage(input_path, output_path, compact)` | File I/O wrapper |
+| `convert_lineage_file_to_json(input_path, output_path, indent)` | File I/O wrapper |
 
 ### `src/ldf/converter.py`
 
-Core conversion module containing:
-
-- `json_to_lineage_format(graph, options)` - Convert dict to LDF string
-- `lineage_format_to_json(input_text)` - Convert LDF string to dict
-- `convert_json_file_to_lineage(input_path, output_path, compact)` - File conversion
-- `convert_lineage_file_to_json(input_path, output_path, indent)` - File conversion
+Core module. Both conversion directions are lossless for all fields
+in the backend `LineageGraph` schema (`assets_in_view`, `edges_in_view`,
+`graph_calculation_datetime`, `graph_calculation_timestamp`).
 
 ### `src/ldf/cli.py`
 
 Command-line interface providing:
 
-- `ldf json-to-lineage` - Convert JSON file to LDF
-- `ldf lineage-to-json` - Convert LDF file to JSON
-
-### `src/ldf/__init__.py`
-
-Public API exports for library usage.
-
-## Testing
-
-Run tests with:
-
-```bash
-pytest
-```
-
-Run tests with coverage:
-
-```bash
-pytest --cov=ldf
-```
-
-## Examples
-
-### Run the basic example:
-
-```bash
-cd examples
-python3 basic_usage.py
-```
-
-### Run the real data conversion example:
-
-```bash
-cd examples
-python3 convert_example.py
-```
-
-This will:
-1. Convert mock JSON files to LDF format
-2. Convert LDF back to JSON
-3. Verify round-trip conversion integrity
+- `ldf json-to-lineage` — convert JSON file to LDF
+- `ldf lineage-to-json` — convert LDF file to JSON
 
 ## Development Workflow
 
-1. **Setup virtual environment:**
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+```bash
+# Create virtual environment and install with dev dependencies
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
 
-2. **Install in development mode:**
-   ```bash
-   pip install -e ".[dev]"
-   ```
+# Run tests
+pytest
 
-3. **Make changes to code**
-
-4. **Run tests:**
-   ```bash
-   pytest
-   ```
-
-5. **Run examples to verify:**
-   ```bash
-   python examples/convert_example.py
-   ```
+# Run tests with coverage
+pytest --cov=ldf
+```
 
 ## Package Distribution
 
-Build the package:
-
 ```bash
+# Build wheel and sdist
+pip install build
 python -m build
+# Artefacts appear in dist/
 ```
-
-This creates distribution files in `dist/`:
-- `ldf-0.1.0.tar.gz` (source distribution)
-- `ldf-0.1.0-py3-none-any.whl` (wheel distribution)
-
-## Key Features
-
-- **Lossless conversion**: Full round-trip fidelity between JSON and LDF
-- **Token optimization**: 60-80% reduction in token count vs verbose JSON
-- **Type preservation**: All data types and structures maintained
-- **Extensible**: Supports custom attributes and metadata
-- **Well-tested**: Comprehensive test suite with real data
-- **CLI included**: Easy command-line tools for conversion

@@ -1,15 +1,35 @@
 [build-system]
-requires = ["hatchling"]         
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "ldf"
+name = "lineage-data-format"
 version = "0.1.0"
-description = "Lineage Definition Format — token-optimized graph serialization"
+description = "Lineage Definition Format — token-optimized serialization for data lineage graphs"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.9"
-dependencies = []              
+dependencies = []
+keywords = ["lineage", "data-lineage", "graph", "serialization", "llm", "token-optimization"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://github.com/IBM/lineage-data-format"
+Repository = "https://github.com/IBM/lineage-data-format"
+Issues = "https://github.com/IBM/lineage-data-format/issues"
+Changelog = "https://github.com/IBM/lineage-data-format/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = [
@@ -18,10 +38,22 @@ dev = [
 ]
 
 [project.scripts]
-ldf = "ldf.cli:main"  
+ldf = "ldf.cli:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/ldf"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/",
+    "tests/",
+    "examples/mock_backend_response.json",
+    "examples/output_backend.ldf",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "pyproject.toml",
+]
