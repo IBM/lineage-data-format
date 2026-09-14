@@ -77,6 +77,17 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
         lines = [f"{k}={v}" for k, v in entries.items()]
         return name + ":" + nl + nl.join(lines)
 
+    def _encode_hp_field(s: str) -> str:
+        # Full structural encoding via pct_encode, then also encode ":"
+        # which pct_encode leaves alone (it's only structural in HP segments).
+        s = pct_encode(s)
+        s = s.replace(":", "%3A")
+        return s
+
+    def _encode_hp_segment(h: Dict[str, Any]) -> str:
+        return (f"{h['id']}:{_encode_hp_field(h.get('name', ''))}"
+                f":{_encode_hp_field(h.get('type', ''))}")
+
     # ------------------------------------------------------------------ alias maps
 
     # Node alias: asset.id -> N1, N2, ...
@@ -111,22 +122,26 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
     bt_dict: Dict[str, str] = {}
     bc_dict: Dict[str, str] = {}
     dc_dict: Dict[str, str] = {}
-    _bt_idx = _bc_idx = _dc_idx = 1
+    # Reverse indexes (combined → alias) for O(1) dedup instead of O(n) scan.
+    _bt_rev: Dict[str, str] = {}
+    _bc_rev: Dict[str, str] = {}
+    _dc_rev: Dict[str, str] = {}
 
     def get_lookup_key(
         store: Dict[str, str],
+        reverse: Dict[str, str],
         idx_ref: List[int],
         prefix: str,
         item_id: str,
         item_name: str,
     ) -> str:
         combined = f"{item_id}|{item_name}"
-        for k, v in store.items():
-            if v == combined:
-                return k
+        if combined in reverse:
+            return reverse[combined]
         key = f"{prefix}{idx_ref[0]}"
         idx_ref[0] += 1
         store[key] = combined
+        reverse[combined] = key
         return key
 
     bt_idx_ref = [1]
@@ -166,19 +181,19 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
         # --- BT aliases
         bt_aliases: List[str] = []
         for term in asset.get("business_terms") or []:
-            k = get_lookup_key(bt_dict, bt_idx_ref, "BT", term["id"], term.get("name", ""))
+            k = get_lookup_key(bt_dict, _bt_rev, bt_idx_ref, "BT", term["id"], term.get("name", ""))
             bt_aliases.append(k)
 
         # --- BC aliases
         bc_aliases: List[str] = []
         for cls in asset.get("business_classifications") or []:
-            k = get_lookup_key(bc_dict, bc_idx_ref, "BC", cls["id"], cls.get("name", ""))
+            k = get_lookup_key(bc_dict, _bc_rev, bc_idx_ref, "BC", cls["id"], cls.get("name", ""))
             bc_aliases.append(k)
 
         # --- DC aliases
         dc_aliases: List[str] = []
         for dc in asset.get("data_classes") or []:
-            k = get_lookup_key(dc_dict, dc_idx_ref, "DC", dc["id"], dc.get("name", ""))
+            k = get_lookup_key(dc_dict, _dc_rev, dc_idx_ref, "DC", dc["id"], dc.get("name", ""))
             dc_aliases.append(k)
 
         # --- flags bitmask
@@ -225,7 +240,7 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
             href = children.get("href", "")
             # Use comma as separator: ch=count,has_any,href
             # (href may contain colons from URLs, comma never appears in count/has_any/href)
-            ch_str = f"ch={count},{has_any},{href}" if href else f"ch={count},{has_any}"
+            ch_str = f"ch={count},{has_any},{href}"
             parts.append(ch_str)
 
         node_lines.append(" ".join(parts))
@@ -238,15 +253,6 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
         # This makes the three-field split unambiguous on parse.
         hp_items = asset.get("hierarchical_path") or []
         if hp_items:
-            def _encode_hp_field(s: str) -> str:
-                # Full structural encoding via pct_encode, then also encode ":"
-                # which pct_encode leaves alone (it's only structural in HP segments).
-                s = pct_encode(s)
-                s = s.replace(":", "%3A")
-                return s
-            def _encode_hp_segment(h: Dict[str, Any]) -> str:
-                return (f"{h['id']}:{_encode_hp_field(h.get('name',''))}"
-                        f":{_encode_hp_field(h.get('type',''))}")
             hp_entries[alias] = "|".join(_encode_hp_segment(h) for h in hp_items)
 
         # --- ATTR section
