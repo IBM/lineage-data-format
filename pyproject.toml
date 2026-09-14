@@ -1,20 +1,37 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
 name = "lineage-data-format"
-version = "0.1.0"
+version = "0.1.1"
 description = "Lineage Definition Format — token-optimized serialization for data lineage graphs"
 readme = "README.md"
-license = { file = "LICENSE" }
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
 requires-python = ">=3.9"
+
+authors = [
+    { name = "Karol Trzaska", email = "ktrzaska@ibm.com" },
+    { name = "Gregoire Cattan", email = "Gregoire.Cattan@ibm.com" },
+    { name = "Maciej Stokfisz", email = "maciej.stokfisz@ibm.com" },
+    { name = "Patryk Pierzchala", email = "Patryk.Pierzchala1@ibm.com" },
+]
+
 dependencies = []
-keywords = ["lineage", "data-lineage", "graph", "serialization", "llm", "token-optimization"]
+
+keywords = [
+    "lineage",
+    "data-lineage",
+    "graph",
+    "serialization",
+    "llm",
+    "token-optimization",
+]
+
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
