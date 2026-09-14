@@ -48,3 +48,9 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `identity_key` field was not serialized or deserialized
 
 [0.1.0]: https://github.com/IBM/lineage-data-format/releases/tag/v0.1.0
+
+## [0.1.1] - 2026-09-14
+
+### Fixed
+
+- Correct package license metadata from Apache-2.0 to BSD-3-Clause.
