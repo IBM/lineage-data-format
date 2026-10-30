@@ -962,8 +962,6 @@ def expected_graph(g, exclude):
         assets.append({} if e is _GONE else e)
     edges = []
     for e in g["edges_in_view"]:
-        if "target" not in e:      # legacy decoder drops edges without target
-            continue
         x = reference_prune(e, (), pats)
         edges.append({} if x is _GONE else x)
     return assets, edges
@@ -1231,18 +1229,94 @@ class TestEndEdges:
         text = json_to_lineage_format(self._g(), {"compact": True})
         assert sections(text)["E"] == ["N1", "N2>N1"]
 
-    def test_decoder_still_drops_end_edges_and_keeps_the_rest(self):
+    def test_decoder_keeps_end_edges(self):
         restored = lineage_format_to_json(json_to_lineage_format(self._g()))
-        assert [(e["source"], e["target"]) for e in restored["edges_in_view"]] == [
-            (BACKEND_RESPONSE["edges_in_view"][1]["source"], BACKEND_RESPONSE["edges_in_view"][1]["target"])
+        first, second = BACKEND_RESPONSE["edges_in_view"]
+        assert restored["edges_in_view"] == [
+            {"source": first["source"], "type": "direct"},   # no "target" key, as in the input
+            {"source": second["source"], "target": second["target"], "type": "summary"},
         ]
-        assert restored["edges_in_view"][0]["type"] == "summary"
+
+    @pytest.mark.parametrize("compact", [False, True])
+    @pytest.mark.parametrize("edge_type", ["direct", "summary", None])
+    def test_end_edge_round_trip(self, edge_type, compact):
+        g = self._g()
+        if edge_type is None:
+            del g["edges_in_view"][0]["type"]
+        else:
+            g["edges_in_view"][0]["type"] = edge_type
+        restored = lineage_format_to_json(json_to_lineage_format(g, {"compact": compact}))
+        assert restored["edges_in_view"] == g["edges_in_view"]
 
     def test_decoder_reads_legacy_trailing_arrow(self):
-        legacy = json_to_lineage_format(self._g()).replace("E:\nN1\n", "E:\nN1>\n")
-        assert "N1>\n" in legacy
-        restored = lineage_format_to_json(legacy)
-        assert len(restored["edges_in_view"]) == 1
+        legacy = json_to_lineage_format(self._g()).replace("E:\nN1\n", "E:\nN1>\n").replace("\nN1 etype", "\nN1> etype")
+        assert "N1>\n" in legacy and "N1> etype=direct" in legacy
+        assert lineage_format_to_json(legacy) == lineage_format_to_json(json_to_lineage_format(self._g()))
+
+    def test_end_edge_after_exclusion_round_trips(self):
+        g = self._g()
+        restored = lineage_format_to_json(ldf(g, ["technology", "children"]))
+        assert restored["edges_in_view"] == g["edges_in_view"]
+
+
+class TestEdgeTypeMatching:
+    """EP types are matched to edges in order, not by "source>target" alone."""
+
+    def test_same_pair_with_different_types_keeps_each_type(self):
+        a, b = (x["id"] for x in BACKEND_RESPONSE["assets_in_view"])
+        g = graph()
+        g["edges_in_view"] = [
+            {"source": a, "target": b, "type": "direct"},
+            {"source": a, "target": b, "type": "summary"},
+        ]
+        restored = lineage_format_to_json(json_to_lineage_format(g))
+        assert restored["edges_in_view"] == g["edges_in_view"]
+
+    def test_same_pair_with_same_type_twice(self):
+        a, b = (x["id"] for x in BACKEND_RESPONSE["assets_in_view"])
+        g = graph()
+        g["edges_in_view"] = [
+            {"source": a, "target": b, "type": "summary"},
+            {"source": b, "target": a, "type": "direct"},
+            {"source": a, "target": b, "type": "summary"},
+        ]
+        restored = lineage_format_to_json(json_to_lineage_format(g))
+        assert restored["edges_in_view"] == g["edges_in_view"]
+
+    def test_typed_edge_followed_by_untyped_edge_on_same_pair(self):
+        a, b = (x["id"] for x in BACKEND_RESPONSE["assets_in_view"])
+        g = graph()
+        g["edges_in_view"] = [
+            {"source": a, "target": b, "type": "direct"},
+            {"source": a, "target": b},
+        ]
+        restored = lineage_format_to_json(json_to_lineage_format(g))
+        assert restored["edges_in_view"] == g["edges_in_view"]
+
+    def test_duplicates_mixed_with_end_edges(self):
+        a, b = (x["id"] for x in BACKEND_RESPONSE["assets_in_view"])
+        g = graph()
+        g["edges_in_view"] = [
+            {"source": a, "target": b, "type": "direct"},
+            {"source": a, "type": "summary"},
+            {"source": a, "target": b, "type": "summary"},
+            {"source": b, "type": "direct"},
+            {"source": a, "type": "direct"},
+        ]
+        restored = lineage_format_to_json(json_to_lineage_format(g))
+        assert restored["edges_in_view"] == g["edges_in_view"]
+
+    def test_ep_order_across_pairs_does_not_matter(self):
+        a, b = (x["id"] for x in BACKEND_RESPONSE["assets_in_view"])
+        g = graph()
+        g["edges_in_view"] = [
+            {"source": a, "target": b, "type": "direct"},
+            {"source": b, "target": a, "type": "summary"},
+        ]
+        text = json_to_lineage_format(g)
+        swapped = text.replace("N1>N2 etype=direct\nN2>N1 etype=summary", "N2>N1 etype=summary\nN1>N2 etype=direct")
+        assert swapped != text
+        assert lineage_format_to_json(swapped)["edges_in_view"] == g["edges_in_view"]
 
     def test_edges_with_target_unchanged(self):
         assert sections(json_to_lineage_format(graph()))["E"] == ["N1>N2", "N2>N1"]

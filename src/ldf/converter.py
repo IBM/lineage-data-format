@@ -670,13 +670,21 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
 
     # ------------------------------------------------------------------ edges
 
-    # Build edge map keyed by "src_alias>tgt_alias" for EP merge
-    edge_type_map: Dict[str, str] = {}
+    def split_edge(pair: str) -> Tuple[str, str]:
+        """'N1>N2' -> ('N1', 'N2'). An end edge, written 'N7' (or 'N7>' by older
+        versions), gives ('N7', '')."""
+        src, _, tgt = pair.partition(">")
+        return src.strip(), tgt.strip()
+
+    # EP types, queued per (source, target) pair in file order. Edges are matched
+    # to them in E order, so several edges between the same pair (e.g. a direct
+    # and a summary edge) each keep their own type instead of sharing the last one.
+    edge_types: Dict[Tuple[str, str], List[str]] = {}
     for raw_line in sections.get("EP", []):
         t = raw_line.strip()
         if not t:
             continue
-        # Format: N1>N2 etype=direct
+        # Format: N1>N2 etype=direct (end edge: N7 etype=direct)
         space_idx = t.find(" ")
         pair = t[:space_idx] if space_idx != -1 else t
         rest_ep = t[space_idx + 1:] if space_idx != -1 else ""
@@ -685,26 +693,23 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
             if kv.startswith("etype="):
                 etype = kv[6:]
         if etype:
-            edge_type_map[pair] = etype
+            edge_types.setdefault(split_edge(pair), []).append(etype)
 
     edges_in_view: List[Dict[str, Any]] = []
     for raw_line in sections.get("E", []):
         t = raw_line.strip()
         if not t:
             continue
-        arrow = t.find(">")
-        if arrow == -1:
+        src_alias, tgt_alias = split_edge(t)
+        if not src_alias:
             continue
-        src_alias = t[:arrow].strip()
-        tgt_alias = t[arrow + 1:].strip()
-        if not src_alias or not tgt_alias:
-            continue
-        src_id = ID.get(src_alias, src_alias)
-        tgt_id = ID.get(tgt_alias, tgt_alias)
-        edge: Dict[str, Any] = {"source": src_id, "target": tgt_id}
-        pair_key = f"{src_alias}>{tgt_alias}"
-        if pair_key in edge_type_map:
-            edge["type"] = edge_type_map[pair_key]
+        edge: Dict[str, Any] = {"source": ID.get(src_alias, src_alias)}
+        # An end edge has no target: the key is omitted, as in the original input.
+        if tgt_alias:
+            edge["target"] = ID.get(tgt_alias, tgt_alias)
+        queued = edge_types.get((src_alias, tgt_alias))
+        if queued:
+            edge["type"] = queued.pop(0)
         edges_in_view.append(edge)
 
     # ------------------------------------------------------------------ nodes
