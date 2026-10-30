@@ -26,6 +26,9 @@ Examples:
   
   # Use compact format (no extra whitespace)
   ldf json-to-lineage input.json output.ldf --compact
+
+  # Exclude fields (names, dotted paths, fnmatch wildcards)
+  ldf json-to-lineage input.json output.ldf --exclude children,descendant_statistics,is_favorite,source_code_snippets
         """
     )
     
@@ -42,6 +45,14 @@ Examples:
         '--compact',
         action='store_true',
         help='Use compact format (no extra whitespace)'
+    )
+    json_parser.add_argument(
+        '--exclude',
+        action='append',
+        default=[],
+        metavar='FIELDS',
+        help='Comma-separated fields to exclude from the output, e.g. '
+             '"children,technology.id,is_*" (can be given multiple times)'
     )
     
     # lineage-to-json command
@@ -66,10 +77,14 @@ Examples:
     
     try:
         if args.command == 'json-to-lineage':
+            exclude_fields = [
+                f.strip() for group in args.exclude for f in group.split(',') if f.strip()
+            ]
             convert_json_file_to_lineage(
                 args.input,
                 args.output,
-                compact=args.compact
+                compact=args.compact,
+                exclude_fields=exclude_fields
             )
             print(f"✓ Converted {args.input} → {args.output}")
         

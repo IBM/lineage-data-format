@@ -4,10 +4,136 @@ Provides functions to convert between JSON and lineage format.
 """
 
 import json
-from typing import Dict, List, Any, Optional, Tuple
+import logging
+from fnmatch import fnmatchcase
+from typing import Dict, List, Any, Optional, Set, Tuple
+
+logger = logging.getLogger(__name__)
+
+_REMOVED = object()
+_RECORD_LISTS = ("assets_in_view", "edges_in_view")  # paths are relative to each record
+# Marks a field that was removed by exclude_fields (distinct from any real value).
+_ABSENT = object()
 
 
-def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bool]] = None) -> str:
+def _matching_patterns(path: Tuple[str, ...], patterns: List[Tuple[str, ...]]) -> List[int]:
+    """Indexes of exclude patterns matching the key path ``path``.
+
+    A pattern without a dot matches the last key of the path (any depth).
+    A dotted pattern must match the whole path, segment by segment. The path
+    is relative to the asset / edge ("technology.id"). Arrays are transparent:
+    they do not add a path segment. Segments use fnmatch syntax.
+    """
+    found = []
+    for i, pattern in enumerate(patterns):
+        if len(pattern) == 1:
+            ok = fnmatchcase(path[-1], pattern[0])
+        else:
+            ok = len(pattern) == len(path) and all(
+                fnmatchcase(p, s) for p, s in zip(path, pattern)
+            )
+        if ok:
+            found.append(i)
+    return found
+
+
+def _prune_node(
+    node: Any,
+    path: Tuple[str, ...],
+    patterns: List[Tuple[str, ...]],
+    hits: Set[int],
+) -> Any:
+    """Return a pruned copy of ``node`` (input is never mutated).
+
+    Returns ``_REMOVED`` when pruning left a dict/list empty, so that no empty
+    containers remain in the output.
+    """
+    if isinstance(node, dict):
+        out: Dict[str, Any] = {}
+        removed_any = False
+        for key, value in node.items():
+            child_path = path + (str(key),)
+            matched = _matching_patterns(child_path, patterns)
+            # Always descend (even into removed values) so that every pattern
+            # which matches something is recorded as a hit.
+            pruned = _prune_node(value, child_path, patterns, hits)
+            if matched:
+                hits.update(matched)
+                removed_any = True
+                continue
+            if pruned is _REMOVED:
+                removed_any = True
+                continue
+            out[key] = pruned
+        return _REMOVED if removed_any and not out else out
+    if isinstance(node, list):
+        items = []
+        removed_any = False
+        for item in node:
+            pruned = _prune_node(item, path, patterns, hits)
+            if pruned is _REMOVED:
+                removed_any = True
+                continue
+            items.append(pruned)
+        return _REMOVED if removed_any and not items else items
+    return node
+
+
+def _apply_exclusions(graph: Dict[str, Any], exclude_fields: List[str]) -> Tuple[Dict[str, Any], bool]:
+    """Return ``(pruned copy of graph, whether any field was removed)``.
+
+    The input graph is never mutated.
+    """
+    if isinstance(exclude_fields, str) or not all(isinstance(p, str) for p in exclude_fields):
+        raise TypeError("exclude_fields must be a list of str")
+
+    patterns = [tuple(p.split(".")) for p in exclude_fields]
+    hits: Set[int] = set()
+
+    result: Dict[str, Any] = {}
+    for key, value in graph.items():
+        matched = _matching_patterns((key,), patterns)
+        if key in _RECORD_LISTS and isinstance(value, list):
+            records = []
+            for record in value:
+                pruned = _prune_node(record, (), patterns, hits)
+                records.append({} if pruned is _REMOVED else pruned)
+            pruned_value: Any = records
+        else:
+            pruned_value = _prune_node(value, (key,), patterns, hits)
+        if matched:
+            hits.update(matched)
+            continue
+        if pruned_value is not _REMOVED:
+            result[key] = pruned_value
+
+    # Fields the serializer cannot do without. Only a field that was present in
+    # the input and removed by exclude_fields is an error: edges without a
+    # "target" (e.g. "summary" edges) are valid input and are left untouched.
+    for list_key, required_fields in (
+        ("assets_in_view", ("id",)),
+        ("edges_in_view", ("source", "target")),
+    ):
+        originals = graph.get(list_key)
+        pruned_records = result.get(list_key)
+        if not isinstance(originals, list) or pruned_records is None:
+            continue
+        for i, (orig, pruned) in enumerate(zip(originals, pruned_records)):
+            for required in required_fields:
+                if required in orig and required not in pruned:
+                    raise ValueError(
+                        f"exclude_fields cannot remove required field '{required}' "
+                        f"(from {list_key}[{i}])"
+                    )
+
+    for i in range(len(patterns)):
+        if i not in hits:
+            logger.debug("exclude_fields entry %r matched no field; ignoring", exclude_fields[i])
+
+    return result, bool(hits)
+
+
+def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, Any]] = None) -> str:
     """
     Convert a backend LineageGraph dict to lineage format string.
 
@@ -17,12 +143,31 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
             - edges_in_view: List of edge dicts (FlowEdge)
             - graph_calculation_datetime: ISO datetime string (optional)
             - graph_calculation_timestamp: Unix timestamp (optional)
-        options: Optional dict with 'compact' boolean flag
+        options: Optional dict with:
+            - 'compact': boolean flag
+            - 'exclude_fields': list of str, fields removed from the input
+              before serialization (default: empty, output unchanged).
+              A name without a dot ("children") removes that field at every
+              nesting level. A dotted path ("technology.id",
+              "hierarchical_path.type") removes only that field, relative to
+              an asset / edge / the graph root; arrays take no index.
+              Removing an object or array removes its whole content.
+              fnmatch wildcards are supported ("is_*", "*_assignments").
+              Unknown entries are ignored (debug log). The asset ``id`` and
+              edge ``source`` / ``target`` cannot be excluded (ValueError).
 
     Returns:
         String in lineage format
     """
     compact = options.get("compact", False) if options else False
+    exclude_fields = options.get("exclude_fields") if options else None
+    # True only when some field was actually removed (see opt() below); an
+    # empty list or a list matching nothing keeps the output byte-identical.
+    excluding = False
+    if exclude_fields:
+        pruned_graph, excluding = _apply_exclusions(graph, exclude_fields)
+        if excluding:
+            graph = pruned_graph
     # In compact mode: no blank lines between sections, but entries still
     # use newlines so the line-based parser can read them back correctly.
     nl = "\n"
@@ -77,6 +222,14 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
         lines = [f"{k}={v}" for k, v in entries.items()]
         return name + ":" + nl + nl.join(lines)
 
+    def opt(d: Dict[str, Any], key: str, default: Any) -> Any:
+        """d[key]; if missing: _ABSENT when exclude_fields is non-empty (a missing
+        field is treated as excluded and must leave no trace), otherwise the
+        legacy default."""
+        if key in d:
+            return d[key]
+        return _ABSENT if exclude_fields else default
+
     def _encode_hp_field(s: str) -> str:
         # Full structural encoding via pct_encode, then also encode ":"
         # which pct_encode leaves alone (it's only structural in HP segments).
@@ -85,8 +238,26 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
         return s
 
     def _encode_hp_segment(h: Dict[str, Any]) -> str:
-        return (f"{h['id']}:{_encode_hp_field(h.get('name', ''))}"
-                f":{_encode_hp_field(h.get('type', ''))}")
+        # Fields are positional (id:name:type). Trailing fields that were
+        # excluded are dropped so no dangling ":" separator is left behind.
+        fields = [
+            (k, opt(h, k, "")) for k in ("id", "name", "type")
+        ]
+        present = [(k, v) for k, v in fields if v is not _ABSENT]
+        if [k for k, _ in present] == [k for k, _ in fields][:len(present)]:
+            # Present fields form a prefix of (id, name, type): positional.
+            return ":".join(_encode_hp_field(v) if k != "id" else v for k, v in present)
+        # A gap would leave an empty slot ("id::type"): use named fields instead.
+        # The id never contains "=", so a "=" in the first field marks this form.
+        return ":".join(f"{k[0]}={_encode_hp_field(v)}" for k, v in present)
+
+    def _encode_attr(a: Dict[str, Any]) -> str:
+        name = opt(a, "name", "")
+        value = opt(a, "value", "")
+        name_s = "" if name is _ABSENT else name
+        if value is _ABSENT:
+            return name_s
+        return f"{name_s}={pct_encode(value)}"
 
     # ------------------------------------------------------------------ alias maps
 
@@ -105,7 +276,7 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
     def get_tech_key(tech: Dict[str, Any]) -> str:
         nonlocal _tech_idx
         tech_id = tech.get("id", "")
-        name = tech.get("name", "")
+        name = opt(tech, "name", "")
         # Prefer deduplication by id; fall back to name when id is absent
         dedup_key = tech_id if tech_id else name
         dedup_store = _tech_id_to_key if tech_id else _tech_name_to_key
@@ -113,7 +284,8 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
             key = f"T{_tech_idx}"
             _tech_idx += 1
             dedup_store[dedup_key] = key
-            t_dict[key] = name
+            if name is not _ABSENT:
+                t_dict[key] = name
             if tech_id:
                 tid_dict[key] = tech_id
         return dedup_store[dedup_key]
@@ -132,10 +304,18 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
         reverse: Dict[str, str],
         idx_ref: List[int],
         prefix: str,
-        item_id: str,
-        item_name: str,
+        item_id: Any,
+        item_name: Any,
     ) -> str:
-        combined = f"{item_id}|{item_name}"
+        # Excluded fields leave no trace: no trailing "|" when the name is
+        # absent, and the named form "n=<name>" (no empty id slot) when the
+        # id is absent. An id never contains "=" nor "|".
+        if item_id is _ABSENT:
+            combined = f"n={item_name}"
+        elif item_name is _ABSENT:
+            combined = item_id
+        else:
+            combined = f"{item_id}|{item_name}"
         if combined in reverse:
             return reverse[combined]
         key = f"{prefix}{idx_ref[0]}"
@@ -172,7 +352,9 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
         id_dict[alias] = asset_id
         # pct_encode preserves \n and other structural chars in the name value
         # so the line-based NAME: section parser doesn't split mid-value.
-        name_dict[alias] = pct_encode(asset.get("name", ""))
+        asset_name = opt(asset, "name", "")
+        if asset_name is not _ABSENT:
+            name_dict[alias] = pct_encode(asset_name)
 
         # --- technology path alias
         tech = asset.get("technology")
@@ -181,19 +363,19 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
         # --- BT aliases
         bt_aliases: List[str] = []
         for term in asset.get("business_terms") or []:
-            k = get_lookup_key(bt_dict, _bt_rev, bt_idx_ref, "BT", term["id"], term.get("name", ""))
+            k = get_lookup_key(bt_dict, _bt_rev, bt_idx_ref, "BT", opt(term, "id", ""), opt(term, "name", ""))
             bt_aliases.append(k)
 
         # --- BC aliases
         bc_aliases: List[str] = []
         for cls in asset.get("business_classifications") or []:
-            k = get_lookup_key(bc_dict, _bc_rev, bc_idx_ref, "BC", cls["id"], cls.get("name", ""))
+            k = get_lookup_key(bc_dict, _bc_rev, bc_idx_ref, "BC", opt(cls, "id", ""), opt(cls, "name", ""))
             bc_aliases.append(k)
 
         # --- DC aliases
         dc_aliases: List[str] = []
         for dc in asset.get("data_classes") or []:
-            k = get_lookup_key(dc_dict, _dc_rev, dc_idx_ref, "DC", dc["id"], dc.get("name", ""))
+            k = get_lookup_key(dc_dict, _dc_rev, dc_idx_ref, "DC", opt(dc, "id", ""), opt(dc, "name", ""))
             dc_aliases.append(k)
 
         # --- flags bitmask
@@ -213,8 +395,10 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
         # chars) don't break the space-delimited inline token format.
         # Tags are individually percent-encoded so commas/spaces/brackets inside
         # a tag value don't corrupt the comma-delimited array.
-        node_type = pct_encode(asset.get("type", ""))
-        parts: List[str] = [f"{alias}:{node_type}"]
+        # When "type" is excluded the head token is the bare alias (no ":").
+        raw_type = opt(asset, "type", "")
+        head = alias if raw_type is _ABSENT else f"{alias}:{pct_encode(raw_type)}"
+        parts: List[str] = [head]
         if asset.get("resource_key"):
             parts.append(f"rk={pct_encode(asset['resource_key'])}")
         if asset.get("origin"):
@@ -235,13 +419,32 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
         if flags:
             parts.append(f"flags={flags}")
         if children is not None:
-            count = children.get("count", 0)
-            has_any = 1 if children.get("has_any") else 0
-            href = children.get("href", "")
             # Use comma as separator: ch=count,has_any,href
             # (href may contain colons from URLs, comma never appears in count/has_any/href)
-            ch_str = f"ch={count},{has_any},{href}"
-            parts.append(ch_str)
+            # Excluded trailing fields are dropped, not left as empty slots.
+            ch_count = opt(children, "count", 0)
+            ch_has_any = opt(children, "has_any", False)
+            ch_href = opt(children, "href", "")
+            ch_present = [
+                (k, v) for k, v in (
+                    ("count", ch_count),
+                    ("has_any", ch_has_any),
+                    ("href", ch_href),
+                ) if v is not _ABSENT
+            ]
+            ch_keys = [k for k, _ in ch_present]
+            ch_values = [
+                str(v) if k == "count" else ("1" if v else "0") if k == "has_any" else str(v)
+                for k, v in ch_present
+            ]
+            if ch_keys == ["count", "has_any", "href"][:len(ch_keys)]:
+                if ch_values:
+                    parts.append("ch=" + ",".join(ch_values))
+            else:
+                # A gap would leave an empty slot ("ch=,0,href"): use named tokens.
+                token = {"count": "chc", "has_any": "cha", "href": "chh"}
+                for k, v in zip(ch_keys, ch_values):
+                    parts.append(f"{token[k]}={pct_encode(v) if k == 'href' else v}")
 
         node_lines.append(" ".join(parts))
 
@@ -263,9 +466,7 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
         # "value" may contain "|" so we percent-encode "|" and "%" in values.
         attr_items = asset.get("attributes") or []
         if attr_items:
-            attr_entries[alias] = "|".join(
-                f"{a['name']}={pct_encode(a['value'])}" for a in attr_items
-            )
+            attr_entries[alias] = "|".join(_encode_attr(a) for a in attr_items)
 
         # --- SCS / CA / PA / SA sections (JSON blobs)
         scs = asset.get("source_code_snippets")
@@ -287,7 +488,14 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
         # --- DSD section
         dsd = asset.get("data_source_definition_asset")
         if dsd:
-            dsd_entries[alias] = f"{dsd['id']}:{pct_encode(dsd.get('name', ''))}"
+            dsd_id = opt(dsd, "id", "")
+            dsd_name = opt(dsd, "name", "")
+            if dsd_id is _ABSENT:
+                dsd_entries[alias] = f"n={pct_encode(dsd_name)}"
+            elif dsd_name is _ABSENT:
+                dsd_entries[alias] = dsd_id
+            else:
+                dsd_entries[alias] = f"{dsd_id}:{pct_encode(dsd_name)}"
 
     # ------------------------------------------------------------------ GRAPH section
 
@@ -312,9 +520,11 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, bo
     for edge in edges_raw:
         src_alias = alias_map.get(edge.get("source", ""), edge.get("source", ""))
         tgt_alias = alias_map.get(edge.get("target", ""), edge.get("target", ""))
-        edge_lines.append(f"{src_alias}>{tgt_alias}")
+        # An end edge (no target) is written as just the source alias: "N7", not "N7>".
+        pair = f"{src_alias}>{tgt_alias}" if tgt_alias else src_alias
+        edge_lines.append(pair)
         if edge.get("type"):
-            ep_lines.append(f"{src_alias}>{tgt_alias} etype={edge['type']}")
+            ep_lines.append(f"{pair} etype={edge['type']}")
 
     E = "E:" + nl + nl.join(edge_lines) if edge_lines else ""
     EP = "EP:" + nl + nl.join(ep_lines) if ep_lines else ""
@@ -398,12 +608,16 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
             result[t[:eq]] = t[eq + 1:]
         return result
 
-    def parse_id_name(combined: str) -> Tuple[str, str]:
-        """Split 'id|name' → (id, name). id never contains '|'."""
+    def parse_id_name(combined: str) -> Dict[str, Any]:
+        """Split 'id|name' → {"id", "name"}. id never contains '|'.
+        Forms written when a field was excluded: 'id' (no name) and
+        'n=name' (no id); the missing key is then omitted."""
+        if combined.startswith("n="):
+            return {"name": combined[2:]}
         pipe = combined.find("|")
         if pipe == -1:
-            return combined, ""
-        return combined[:pipe], combined[pipe + 1:]
+            return {"id": combined}
+        return {"id": combined[:pipe], "name": combined[pipe + 1:]}
 
     def pct_decode(s: str) -> str:
         """Reverse percent-encoding applied by the serializer.
@@ -503,12 +717,19 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
             continue
 
         # Format: N1:Column rk=... origin=... path=T1 tags=[...] bt=[...] bc=[...] dc=[...] flags=N ch=count:has_any[:href]
-        colon_idx = t.find(":")
+        # The type (after ":") is absent when it was excluded on write.
+        space_idx = t.find(" ")
+        head_end = space_idx if space_idx != -1 else len(t)
+        colon_idx = t.find(":", 0, head_end)
         if colon_idx == -1:
-            continue
-
-        alias = t[:colon_idx]
-        rest = t[colon_idx + 1:]
+            alias = t[:head_end]
+            rest = t[head_end + 1:] if space_idx != -1 else ""
+            if not alias:
+                continue
+            rest = " " + rest  # keep the "first token is the type" layout
+        else:
+            alias = t[:colon_idx]
+            rest = t[colon_idx + 1:]
 
         # Split on spaces but the first token is node type (no key=value).
         # node_type is percent-decoded because pct_encode is applied on write.
@@ -536,10 +757,11 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
         technology: Optional[Dict[str, Any]] = None
         tech_alias = node_kv.get("path")
         if tech_alias:
-            technology = {
-                "id": TID.get(tech_alias, tech_alias),
-                "name": T.get(tech_alias, tech_alias),
-            }
+            technology = {}
+            if tech_alias in TID:
+                technology["id"] = TID[tech_alias]
+            if tech_alias in T:
+                technology["name"] = T[tech_alias]
 
         # Tags — each tag was individually pct_encoded on write, so decode each.
         tags: List[str] = []
@@ -552,8 +774,7 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
             for k in node_kv["bt"].strip("[]").split(","):
                 k = k.strip()
                 if k and k in BT:
-                    bt_id, bt_name = parse_id_name(BT[k])
-                    business_terms.append({"id": bt_id, "name": bt_name})
+                    business_terms.append(parse_id_name(BT[k]))
 
         # Business classifications
         business_classifications: List[Dict[str, Any]] = []
@@ -561,8 +782,7 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
             for k in node_kv["bc"].strip("[]").split(","):
                 k = k.strip()
                 if k and k in BC:
-                    bc_id, bc_name = parse_id_name(BC[k])
-                    business_classifications.append({"id": bc_id, "name": bc_name})
+                    business_classifications.append(parse_id_name(BC[k]))
 
         # Data classes
         data_classes: List[Dict[str, Any]] = []
@@ -570,8 +790,7 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
             for k in node_kv["dc"].strip("[]").split(","):
                 k = k.strip()
                 if k and k in DC:
-                    dc_id, dc_name = parse_id_name(DC[k])
-                    data_classes.append({"id": dc_id, "name": dc_name})
+                    data_classes.append(parse_id_name(DC[k]))
 
         # Flags bitmask → individual booleans
         flags = int(node_kv.get("flags", "0"))
@@ -585,10 +804,21 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
         children: Optional[Dict[str, Any]] = None
         if "ch" in node_kv:
             ch_parts = node_kv["ch"].split(",", 2)
-            ch_count = int(ch_parts[0]) if ch_parts else 0
-            ch_has_any = ch_parts[1] == "1" if len(ch_parts) > 1 else False
-            ch_href = ch_parts[2] if len(ch_parts) > 2 else ""
-            children = {"count": ch_count, "has_any": ch_has_any, "href": ch_href}
+            # Missing trailing slots mean the field was excluded on write.
+            children = {"count": int(ch_parts[0]) if ch_parts[0] else 0}
+            if len(ch_parts) > 1:
+                children["has_any"] = ch_parts[1] == "1"
+            if len(ch_parts) > 2:
+                children["href"] = ch_parts[2]
+        elif any(k in node_kv for k in ("chc", "cha", "chh")):
+            # Named tokens: written when excluded fields left a gap.
+            children = {}
+            if "chc" in node_kv:
+                children["count"] = int(node_kv["chc"])
+            if "cha" in node_kv:
+                children["has_any"] = node_kv["cha"] == "1"
+            if "chh" in node_kv:
+                children["href"] = pct_decode(node_kv["chh"])
 
         # Hierarchical path
         # Encoding: "id:name:type|...".
@@ -601,13 +831,21 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
                 if not segment:
                     continue
                 seg_parts = segment.split(":")
-                if len(seg_parts) < 3:
-                    continue
-                hierarchical_path.append({
-                    "id": seg_parts[0],
-                    "name": pct_decode(seg_parts[1]),
-                    "type": pct_decode(seg_parts[2]),
-                })
+                hp_item: Dict[str, Any] = {}
+                if "=" in seg_parts[0]:
+                    # Named form (written when excluded fields left a gap).
+                    names = {"i": "id", "n": "name", "t": "type"}
+                    for sp in seg_parts:
+                        k, _, v = sp.partition("=")
+                        if k in names:
+                            hp_item[names[k]] = pct_decode(v)
+                else:
+                    hp_item["id"] = seg_parts[0]
+                    if len(seg_parts) > 1:
+                        hp_item["name"] = pct_decode(seg_parts[1])
+                    if len(seg_parts) > 2:
+                        hp_item["type"] = pct_decode(seg_parts[2])
+                hierarchical_path.append(hp_item)
 
         # Attributes
         # Encoding: "name=value|...". name is a system identifier (no "=").
@@ -621,6 +859,8 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
                         "name": attr_seg[:eq],
                         "value": pct_decode(attr_seg[eq + 1:]),
                     })
+                elif attr_seg:
+                    attributes.append({"name": attr_seg})
 
         # JSON blob sections
         source_code_snippets: List[Any] = json.loads(SCS[alias]) if alias in SCS else []
@@ -632,11 +872,15 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
         data_source_definition_asset: Optional[Dict[str, str]] = None
         if alias in DSD:
             colon = DSD[alias].find(":")
-            if colon != -1:
+            if DSD[alias].startswith("n="):
+                data_source_definition_asset = {"name": pct_decode(DSD[alias][2:])}
+            elif colon != -1:
                 data_source_definition_asset = {
                     "id": DSD[alias][:colon],
                     "name": pct_decode(DSD[alias][colon + 1:]),
                 }
+            elif DSD[alias]:
+                data_source_definition_asset = {"id": DSD[alias]}
 
         asset: Dict[str, Any] = {
             "id": asset_id,
@@ -685,7 +929,8 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
 def convert_json_file_to_lineage(
     input_path: str,
     output_path: str,
-    compact: bool = False
+    compact: bool = False,
+    exclude_fields: Optional[List[str]] = None
 ) -> None:
     """
     Convert a backend LineageGraph JSON file to a lineage format (.ldf) file.
@@ -694,10 +939,14 @@ def convert_json_file_to_lineage(
         input_path: Path to input JSON file (backend LineageGraph schema)
         output_path: Path to output lineage format file
         compact: Whether to use compact format (no extra whitespace)
+        exclude_fields: Fields to remove from the input (see json_to_lineage_format)
     """
     with open(input_path, "r", encoding="utf-8") as f:
         data = json.load(f)
-    formatted = json_to_lineage_format(data, {"compact": compact})
+    options: Dict[str, Any] = {"compact": compact}
+    if exclude_fields:
+        options["exclude_fields"] = exclude_fields
+    formatted = json_to_lineage_format(data, options)
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(formatted)
 

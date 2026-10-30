@@ -7,6 +7,25 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [Unreleased]
+
+### Changed
+
+- An edge without a `target` (end edge) is written as `N7` instead of `N7>` in `E` and `EP`,
+  saving a token per edge. The decoder still accepts the old `N7>` form.
+
+### Added
+
+- `exclude_fields` option of `json_to_lineage_format` (list of field names, dotted
+  paths and `fnmatch` wildcards) that removes fields from the input before
+  serialization, so the output has no empty separators, entries or sections.
+  The default (empty list) leaves the output unchanged.
+- The decoder reads the alternative forms written when only part of a record is
+  excluded (`chc=`/`cha=`/`chh=`, `i=`/`n=`/`t=` in `HP`, `n=` / bare id in
+  `BT`/`BC`/`DC`/`DSD`, attributes without name or value, node head without type).
+
+---
+
 ## [0.1.0] — 2024-07-22
 
 ### Added
