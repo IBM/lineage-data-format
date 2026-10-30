@@ -7,6 +7,36 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [Unreleased]
+
+### Changed
+
+- An edge without a `target` (end edge) is written as `N7` instead of `N7>` in `E` and `EP`.
+  This saves one character per occurrence and one token per end edge that has a type
+  (in `EP`; in `E` the `>` and the newline are a single token, so nothing is saved there).
+  The decoder still accepts the old `N7>` form.
+
+### Fixed
+
+- The decoder no longer drops end edges (edges without a `target`). They are returned as an
+  edge with only `source` (and `type`, when present in `EP`), both from `N7` and from the old `N7>`.
+- Edge types in `EP` are matched to edges in order, per `source>target` pair. Several edges
+  between the same pair (e.g. a `direct` and a `summary` edge) keep their own type instead of
+  all taking the last one. Known limit: an untyped edge written before a typed edge on the same
+  pair comes back with the type on the first of the two.
+
+### Added
+
+- `exclude_fields` option of `json_to_lineage_format` (list of field names, dotted
+  paths and `fnmatch` wildcards) that removes fields from the input before
+  serialization, so the output has no empty separators, entries or sections.
+  The default (empty list) leaves the output unchanged.
+- The decoder reads the alternative forms written when only part of a record is
+  excluded (`chc=`/`cha=`/`chh=`, `i=`/`n=`/`t=` in `HP`, `n=` / bare id in
+  `BT`/`BC`/`DC`/`DSD`, attributes without name or value, node head without type).
+
+---
+
 ## [0.1.0] — 2024-07-22
 
 ### Added

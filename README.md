@@ -100,7 +100,35 @@ convert_lineage_file_to_json('input.ldf', 'output.json')
 
 # Compact mode (single blank line between sections instead of two)
 ldf_compact = json_to_lineage_format(backend_response, {'compact': True})
+
+# Exclude fields from the output (applied to the input, before serialization)
+ldf_slim = json_to_lineage_format(
+    backend_response,
+    {'exclude_fields': ['children', 'technology.id', 'hierarchical_path.type', 'is_*']},
+)
 ```
+
+#### `exclude_fields`
+
+A list of `str` passed in the options dict. The default is an empty list, in which
+case the output is identical to the output without the option.
+
+| Entry | Effect |
+|-------|--------|
+| `"children"` | removes the field with that name at every nesting level (assets, edges, top level, nested objects) |
+| `"technology.id"` | removes only that field; the path is relative to the asset/edge, arrays take no indices |
+| `"technology"` | removing an object or array removes its whole content |
+| `"is_*"`, `"*_assignments"` | wildcards, matched with `fnmatch` (case-sensitive) |
+| unknown entry | ignored (logged at `DEBUG` level) |
+
+Excluded data leaves no trace in the output: no empty separators, entries or
+sections. For example, with `technology` excluded no `path=`, `T` or `TID` is
+written, and with `hierarchical_path` excluded no `HP` section is written.
+When only part of a record is removed, the remaining fields keep their meaning
+through named forms that the decoder understands (`chc=`/`cha=`/`chh=` for
+children, `i=`/`n=`/`t=` in `HP` segments, `n=name` / bare `id` in lookups).
+A non-list value raises `TypeError`; removing an asset `id` or an edge
+`source`/`target` raises `ValueError`.
 
 ### Command Line Interface
 
@@ -110,6 +138,9 @@ ldf json-to-lineage input.json output.ldf
 
 # Convert with compact format (minimal blank lines)
 ldf json-to-lineage input.json output.ldf --compact
+
+# Exclude fields (comma-separated and/or repeated; names, dotted paths, wildcards)
+ldf json-to-lineage input.json output.ldf --exclude children,descendant_statistics,is_favorite,source_code_snippets
 
 # Convert lineage format back to JSON
 ldf lineage-to-json input.ldf output.json
@@ -128,8 +159,8 @@ The Lineage Definition Format is a compact, plain-text format that defines repea
 |---|---|---|
 | `GRAPH` | Structural | Marker line + optional `dt=` / `ts=` meta |
 | `START` | Structural | Alias of the first asset |
-| `E` | Structural | Directed edges: `N1>N2` |
-| `EP` | Structural | Edge properties: `N1>N2 etype=direct` |
+| `E` | Structural | Directed edges: `N1>N2`; an edge without a target (end edge) is just the source alias: `N7` |
+| `EP` | Structural | Edge properties: `N1>N2 etype=direct` (end edge: `N7 etype=summary`), listed in `E` order |
 | `N` | Structural | Node definitions (see format below) |
 | `T` | Lookup | Technology names: `T1=PostgreSQL` |
 | `TID` | Lookup | Technology UUIDs: `T1=<uuid>` |
