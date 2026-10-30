@@ -160,7 +160,7 @@ The Lineage Definition Format is a compact, plain-text format that defines repea
 | `GRAPH` | Structural | Marker line + optional `dt=` / `ts=` meta |
 | `START` | Structural | Alias of the first asset |
 | `E` | Structural | Directed edges: `N1>N2`; an edge without a target (end edge) is just the source alias: `N7` |
-| `EP` | Structural | Edge properties: `N1>N2 etype=direct` |
+| `EP` | Structural | Edge properties: `N1>N2 etype=direct` (end edge: `N7 etype=summary`), listed in `E` order |
 | `N` | Structural | Node definitions (see format below) |
 | `T` | Lookup | Technology names: `T1=PostgreSQL` |
 | `TID` | Lookup | Technology UUIDs: `T1=<uuid>` |
