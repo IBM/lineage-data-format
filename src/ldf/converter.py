@@ -145,6 +145,10 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, An
             - graph_calculation_timestamp: Unix timestamp (optional)
         options: Optional dict with:
             - 'compact': boolean flag
+            - 'aliases': boolean flag (default True). Enables the alias
+              mechanisms that remove repeated values from the output (see
+              .planning/ldf-aliases-plan.md). False keeps the legacy,
+              fully expanded form. The decoder reads both forms.
             - 'exclude_fields': list of str, fields removed from the input
               before serialization (default: empty, output unchanged).
               A name without a dot ("children") removes that field at every
@@ -160,6 +164,7 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, An
         String in lineage format
     """
     compact = options.get("compact", False) if options else False
+    aliases = options.get("aliases", True) if options else True  # noqa: F841 (used by later alias stages)
     exclude_fields = options.get("exclude_fields") if options else None
     # True only when some field was actually removed (see opt() below); an
     # empty list or a list matching nothing keeps the output byte-identical.
@@ -654,6 +659,28 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
     SA = parse_dict("SA")    # N1 -> json string
     DSD = parse_dict("DSD")  # N1 -> "id:name"
 
+    # Alias-compression tables (written when the "aliases" option is on).
+    # All are optional; legacy documents simply do not contain them.
+    #   REF  : R1 -> encoded value shared by ATTR / HP / DSD entries ("@R1")
+    #   IKP  : P1 -> encoded identity_key prefix (node token "ikp=P1")
+    #   NDEF : default node tokens, inherited by nodes that do not carry them
+    REF = parse_dict("REF")
+    IKP = parse_dict("IKP")
+
+    ndef_kv: Dict[str, str] = {}
+    for raw_line in sections.get("NDEF", []):
+        for token in raw_line.strip().split(" "):
+            eq = token.find("=")
+            if eq > 0:
+                ndef_kv[token[:eq]] = token[eq + 1:]
+
+    def deref(value: str) -> str:
+        """Expand a "@Rn" reference into its REF value. A "@..." value whose
+        key is not in REF is a plain literal and is returned unchanged."""
+        if value.startswith("@") and value[1:] in REF:
+            return REF[value[1:]]
+        return value
+
     # ------------------------------------------------------------------ GRAPH meta
 
     graph_dt: Optional[str] = None
@@ -670,16 +697,23 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
 
     # ------------------------------------------------------------------ edges
 
-    def split_edge(pair: str) -> Tuple[str, str]:
-        """'N1>N2' -> ('N1', 'N2'). An end edge, written 'N7' (or 'N7>' by older
-        versions), gives ('N7', '')."""
+    def split_edges(pair: str) -> List[Tuple[str, str]]:
+        """'N1>N2' -> [('N1', 'N2')]. An end edge, written 'N7' (or 'N7>' by
+        older versions), gives [('N7', '')]. Edges grouped by source,
+        'N1>N2,N3', give one pair per target, in the written order."""
         src, _, tgt = pair.partition(">")
-        return src.strip(), tgt.strip()
+        src = src.strip()
+        targets = [x.strip() for x in tgt.split(",") if x.strip()]
+        return [(src, x) for x in targets] if targets else [(src, "")]
 
     # EP types, queued per (source, target) pair in file order. Edges are matched
     # to them in E order, so several edges between the same pair (e.g. a direct
     # and a summary edge) each keep their own type instead of sharing the last one.
+    # Default lines apply to edges without an own entry: '*>* etype=direct' for
+    # edges with a target and '* etype=summary' for end edges. An empty
+    # 'etype=' is an explicit "no type".
     edge_types: Dict[Tuple[str, str], List[str]] = {}
+    default_types: Dict[bool, str] = {}  # has_target -> type
     for raw_line in sections.get("EP", []):
         t = raw_line.strip()
         if not t:
@@ -688,29 +722,35 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
         space_idx = t.find(" ")
         pair = t[:space_idx] if space_idx != -1 else t
         rest_ep = t[space_idx + 1:] if space_idx != -1 else ""
-        etype = ""
+        etype: Optional[str] = None
         for kv in rest_ep.split(" "):
             if kv.startswith("etype="):
                 etype = kv[6:]
-        if etype:
-            edge_types.setdefault(split_edge(pair), []).append(etype)
+        if etype is None:
+            continue
+        for key in split_edges(pair):
+            if key[0] == "*":
+                default_types[bool(key[1])] = etype
+            else:
+                edge_types.setdefault(key, []).append(etype)
 
     edges_in_view: List[Dict[str, Any]] = []
     for raw_line in sections.get("E", []):
         t = raw_line.strip()
         if not t:
             continue
-        src_alias, tgt_alias = split_edge(t)
-        if not src_alias:
-            continue
-        edge: Dict[str, Any] = {"source": ID.get(src_alias, src_alias)}
-        # An end edge has no target: the key is omitted, as in the original input.
-        if tgt_alias:
-            edge["target"] = ID.get(tgt_alias, tgt_alias)
-        queued = edge_types.get((src_alias, tgt_alias))
-        if queued:
-            edge["type"] = queued.pop(0)
-        edges_in_view.append(edge)
+        for src_alias, tgt_alias in split_edges(t):
+            if not src_alias:
+                continue
+            edge: Dict[str, Any] = {"source": ID.get(src_alias, src_alias)}
+            # An end edge has no target: the key is omitted, as in the original input.
+            if tgt_alias:
+                edge["target"] = ID.get(tgt_alias, tgt_alias)
+            queued = edge_types.get((src_alias, tgt_alias))
+            etype_value = queued.pop(0) if queued else default_types.get(bool(tgt_alias), "")
+            if etype_value:
+                edge["type"] = etype_value
+            edges_in_view.append(edge)
 
     # ------------------------------------------------------------------ nodes
 
@@ -742,13 +782,19 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
         node_type = pct_decode(raw_parts[0]) if raw_parts else ""
         kv_parts = raw_parts[1:] if len(raw_parts) > 1 else []
 
-        # Parse key=value tokens from the node line
-        node_kv: Dict[str, str] = {}
+        # Parse key=value tokens from the node line. Tokens from NDEF are
+        # inherited; an own token overrides it, and an own empty token
+        # (e.g. "origin=") removes the inherited value.
+        node_kv: Dict[str, str] = dict(ndef_kv)
         for part in kv_parts:
             eq = part.find("=")
             if eq == -1:
                 continue
-            node_kv[part[:eq]] = part[eq + 1:]
+            key, value = part[:eq], part[eq + 1:]
+            if value == "" and key in ndef_kv:
+                node_kv.pop(key, None)
+            else:
+                node_kv[key] = value
 
         # Resolve scalar fields
         asset_id = ID.get(alias, alias)
@@ -756,7 +802,13 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
         asset_name = pct_decode(NAME.get(alias, ""))
         resource_key = pct_decode(node_kv["rk"]) if "rk" in node_kv else None
         origin = pct_decode(node_kv["origin"]) if "origin" in node_kv else None
-        identity_key = pct_decode(node_kv["ik"]) if "ik" in node_kv else None
+        # ik is optionally split into a shared prefix (ikp=P1 -> IKP) and a suffix.
+        identity_key = None
+        if "ik" in node_kv or "ikp" in node_kv:
+            identity_key = (
+                pct_decode(IKP.get(node_kv.get("ikp", ""), ""))
+                + pct_decode(node_kv.get("ik", ""))
+            )
 
         # Technology
         technology: Optional[Dict[str, Any]] = None
@@ -831,10 +883,13 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
         # percent-encoded as %3A, %7C, %25 so split(":") produces exactly 3
         # tokens: [id, encoded_name, encoded_type].
         hierarchical_path: List[Dict[str, Any]] = []
-        if alias in HP:
-            for segment in HP[alias].split("|"):
+        # A "*" entry is the default for nodes without an own entry.
+        hp_raw = HP.get(alias, HP.get("*"))
+        if hp_raw is not None:
+            for segment in hp_raw.split("|"):
                 if not segment:
                     continue
+                segment = deref(segment)
                 seg_parts = segment.split(":")
                 hp_item: Dict[str, Any] = {}
                 if "=" in seg_parts[0]:
@@ -858,6 +913,7 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
         attributes: List[Dict[str, str]] = []
         if alias in ATTR:
             for attr_seg in ATTR[alias].split("|"):
+                attr_seg = deref(attr_seg)
                 eq = attr_seg.find("=")
                 if eq != -1:
                     attributes.append({
@@ -875,17 +931,19 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
 
         # Data source definition asset
         data_source_definition_asset: Optional[Dict[str, str]] = None
-        if alias in DSD:
-            colon = DSD[alias].find(":")
-            if DSD[alias].startswith("n="):
-                data_source_definition_asset = {"name": pct_decode(DSD[alias][2:])}
+        dsd_raw = DSD.get(alias, DSD.get("*"))
+        if dsd_raw is not None:
+            dsd_raw = deref(dsd_raw)
+            colon = dsd_raw.find(":")
+            if dsd_raw.startswith("n="):
+                data_source_definition_asset = {"name": pct_decode(dsd_raw[2:])}
             elif colon != -1:
                 data_source_definition_asset = {
-                    "id": DSD[alias][:colon],
-                    "name": pct_decode(DSD[alias][colon + 1:]),
+                    "id": dsd_raw[:colon],
+                    "name": pct_decode(dsd_raw[colon + 1:]),
                 }
-            elif DSD[alias]:
-                data_source_definition_asset = {"id": DSD[alias]}
+            elif dsd_raw:
+                data_source_definition_asset = {"id": dsd_raw}
 
         asset: Dict[str, Any] = {
             "id": asset_id,
@@ -935,7 +993,8 @@ def convert_json_file_to_lineage(
     input_path: str,
     output_path: str,
     compact: bool = False,
-    exclude_fields: Optional[List[str]] = None
+    exclude_fields: Optional[List[str]] = None,
+    aliases: bool = True
 ) -> None:
     """
     Convert a backend LineageGraph JSON file to a lineage format (.ldf) file.
@@ -945,10 +1004,11 @@ def convert_json_file_to_lineage(
         output_path: Path to output lineage format file
         compact: Whether to use compact format (no extra whitespace)
         exclude_fields: Fields to remove from the input (see json_to_lineage_format)
+        aliases: Whether to use alias compression (see json_to_lineage_format)
     """
     with open(input_path, "r", encoding="utf-8") as f:
         data = json.load(f)
-    options: Dict[str, Any] = {"compact": compact}
+    options: Dict[str, Any] = {"compact": compact, "aliases": aliases}
     if exclude_fields:
         options["exclude_fields"] = exclude_fields
     formatted = json_to_lineage_format(data, options)
