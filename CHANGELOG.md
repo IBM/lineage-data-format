@@ -7,7 +7,19 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
-## [Unreleased]
+## [0.2.0] - 2026-11-02
+
+### Added
+
+- `exclude_fields` option of `json_to_lineage_format` (list of field names, dotted
+  paths and `fnmatch` wildcards) that removes fields from the input before
+  serialization, so the output has no empty separators, entries or sections.
+  With an empty list the output is the same as without the option.
+- `--exclude` option of `ldf json-to-lineage` and an `exclude_fields` argument of
+  `convert_json_file_to_lineage`.
+- The decoder reads the alternative forms written when only part of a record is
+  excluded (`chc=`/`cha=`/`chh=`, `i=`/`n=`/`t=` in `HP`, `n=` / bare id in
+  `BT`/`BC`/`DC`/`DSD`, attributes without name or value, node head without type).
 
 ### Changed
 
@@ -25,15 +37,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   all taking the last one. Known limit: an untyped edge written before a typed edge on the same
   pair comes back with the type on the first of the two.
 
-### Added
+---
 
-- `exclude_fields` option of `json_to_lineage_format` (list of field names, dotted
-  paths and `fnmatch` wildcards) that removes fields from the input before
-  serialization, so the output has no empty separators, entries or sections.
-  The default (empty list) leaves the output unchanged.
-- The decoder reads the alternative forms written when only part of a record is
-  excluded (`chc=`/`cha=`/`chh=`, `i=`/`n=`/`t=` in `HP`, `n=` / bare id in
-  `BT`/`BC`/`DC`/`DSD`, attributes without name or value, node head without type).
+## [0.1.1] - 2026-09-14
+
+### Fixed
+
+- Correct package license metadata from Apache-2.0 to BSD-3-Clause.
 
 ---
 
@@ -77,10 +87,6 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Technology deduplication used `name` instead of `id` — two technologies with the same name but different IDs were merged into one
 - `identity_key` field was not serialized or deserialized
 
+[0.2.0]: https://github.com/IBM/lineage-data-format/releases/tag/v0.2.0
+[0.1.1]: https://github.com/IBM/lineage-data-format/releases/tag/v0.1.1
 [0.1.0]: https://github.com/IBM/lineage-data-format/releases/tag/v0.1.0
-
-## [0.1.1] - 2026-09-14
-
-### Fixed
-
-- Correct package license metadata from Apache-2.0 to BSD-3-Clause.

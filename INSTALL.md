@@ -9,7 +9,7 @@ pip install git+https://github.com/IBM/lineage-data-format.git
 Pin to a specific release tag:
 
 ```bash
-pip install git+https://github.com/IBM/lineage-data-format.git@v0.1.0
+pip install git+https://github.com/IBM/lineage-data-format.git@v0.2.0
 ```
 
 ## Install from source (development)
