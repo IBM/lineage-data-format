@@ -9,6 +9,10 @@ on:
       - "pyproject.toml"
   workflow_dispatch:
 
+# Least privilege for every job; the publish job below raises it explicitly.
+permissions:
+  contents: read
+
 jobs:
   check-version:
     name: Check version
