@@ -863,9 +863,10 @@ class TestSize:
 BIG = Path(__file__).resolve().parent.parent / "big_query_lineage.json"
 needs_big = pytest.mark.skipif(not BIG.exists(), reason="big_query_lineage.json not present (git-ignored)")
 
-# Fields the LDF format carries (descendant_statistics is not part of LDF).
+# Fields the LDF format carries.
 CARRIED = {
     "id", "name", "type", "identity_key", "hierarchical_path", "children", "is_favorite", "tags",
+    "descendant_statistics",
     "technology", "attributes", "source_code_snippets", "business_terms", "business_classifications",
     "data_classes", "catalog_assignments", "project_assignments", "space_assignments",
     "is_deduced", "is_transforming", "is_operational", "is_temporary", "origin",
@@ -1056,9 +1057,19 @@ class TestBigQueryLineage:
         assert all(" ch" not in l for l in node_lines(t))
         assert_no_traces(t)
 
-    def test_descendant_statistics_is_ignored_by_format_so_exclusion_is_noop(self, big):
-        assert ldf(big, ["descendant_statistics"]) == json_to_lineage_format(big)
-        assert ldf(big, ["number_of_leaf_descendants"]) == json_to_lineage_format(big)
+    def test_descendant_statistics_exclusion_removes_it_without_traces(self, big):
+        t = ldf(big, ["descendant_statistics"])
+        assert all(" ds" not in l for l in node_lines(t))
+        assert_no_traces(t)
+        restored = lineage_format_to_json(t)
+        assert all("descendant_statistics" not in a for a in restored["assets_in_view"])
+
+    def test_descendant_statistics_subfield_exclusion(self, big):
+        t = ldf(big, ["number_of_leaf_descendants"])
+        restored = lineage_format_to_json(t)
+        for a in restored["assets_in_view"]:
+            assert set(a["descendant_statistics"]) == {"has_leaf_children", "is_every_child_leaf"}
+        assert_no_traces(t)
 
     def test_wildcards(self, big):
         t = ldf(big, ["is_*"])

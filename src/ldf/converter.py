@@ -5,6 +5,7 @@ Provides functions to convert between JSON and lineage format.
 
 import json
 import logging
+import re
 from collections import Counter
 from fnmatch import fnmatchcase
 from typing import Dict, List, Any, Optional, Set, Tuple
@@ -139,7 +140,12 @@ def _apply_exclusions(graph: Dict[str, Any], exclude_fields: List[str]) -> Tuple
 
 # Node-line tokens that may get a default value in the NDEF section.
 _NDEF_KEYS = ("rk", "origin", "path", "tags", "bt", "bc", "dc", "flags",
-              "ch", "chc", "cha", "chh")
+              "ch", "chc", "cha", "chh", "ds", "dsl", "dse", "dsn", "dsj")
+
+# descendant_statistics keys in positional order, and their named tokens.
+_DS_KEYS = ("has_leaf_children", "is_every_child_leaf", "number_of_leaf_descendants")
+_DS_TOKENS = {"has_leaf_children": "dsl", "is_every_child_leaf": "dse",
+              "number_of_leaf_descendants": "dsn"}
 
 
 def _choose_ik_prefixes(
@@ -190,6 +196,259 @@ def _choose_ik_prefixes(
                 assigned[i] = best
     in_use = set(assigned)
     return [p for p in chosen if p in in_use], assigned
+
+
+# Expansions of the section abbreviations, written to the optional LEGEND
+# section (first section of the output, one line per abbreviation present).
+# Only abbreviations are listed, and each line only spells the name out. A
+# legend line must never end with ":" (it would be read as a section header)
+# nor contain a newline.
+_SECTION_LEGEND = {
+    "E": "Edges",
+    "EP": "Edge properties",
+    "NDEF": "Node defaults",
+    "IKP": "Identity key prefixes",
+    "N": "Nodes",
+    "T": "Technology names",
+    "TID": "Technology IDs",
+    "ID": "Node IDs",
+    "URL": "URL templates and prefixes",
+    "SRC": "Source code IDs",
+    "NAME": "Node names",
+    "BT": "Business terms",
+    "BC": "Business classifications",
+    "DC": "Data classes",
+    "HP": "Hierarchical path",
+    "ATTR": "Attributes",
+    "SCS": "Source code snippets",
+    "CA": "Catalog assignments",
+    "PA": "Project assignments",
+    "SA": "Space assignments",
+    "DSD": "Data source definition",
+    "REF": "References",
+}
+
+
+# Compact source_code_snippets entry (aliases on):
+#   <snippet id>@<S alias of source_code.id>@<row>:<col>-<row>:<col>
+# several snippets of one node are joined by "|". Ids are restricted to
+# characters that cannot clash with the separators or with the "[" that starts
+# the JSON form, and the snippet must have exactly the five known keys with an
+# empty lineage_version_timestamps; anything else is written as JSON.
+_SCS_ID_RE = re.compile(r"[0-9A-Za-z_.-]+")
+_SCS_ITEM_RE = re.compile(r"([^@|]+)@([^@|]+)@(\d+):(\d+)-(\d+):(\d+)")
+_SCS_KEYS = {"id", "source_code", "start_position", "end_position", "lineage_version_timestamps"}
+
+
+def _scs_compact_parts(snippet: Any) -> Optional[Tuple[str, str, str]]:
+    """``(snippet id, source_code id, "r:c-r:c")`` when the snippet fits the
+    compact form, else None."""
+    if not isinstance(snippet, dict) or set(snippet) != _SCS_KEYS:
+        return None
+    if snippet["lineage_version_timestamps"] != [] or not isinstance(snippet["lineage_version_timestamps"], list):
+        return None
+    source = snippet["source_code"]
+    if not isinstance(source, dict) or set(source) != {"id"}:
+        return None
+    ids = (snippet["id"], source["id"])
+    if not all(isinstance(i, str) and _SCS_ID_RE.fullmatch(i) for i in ids):
+        return None
+    nums = []
+    for key in ("start_position", "end_position"):
+        pos = snippet[key]
+        if not isinstance(pos, dict) or set(pos) != {"row", "column"}:
+            return None
+        for coord in (pos["row"], pos["column"]):
+            if not isinstance(coord, int) or isinstance(coord, bool) or coord < 0:
+                return None
+            nums.append(coord)
+    return ids[0], ids[1], f"{nums[0]}:{nums[1]}-{nums[2]}:{nums[3]}"
+
+
+def _scs_expand(entry: str, src: Dict[str, str]) -> List[Dict[str, Any]]:
+    """Inverse of the compact SCS entry; the JSON form is read as is."""
+    if entry.startswith(("[", "{")):
+        return json.loads(entry)
+    snippets = []
+    for item in entry.split("|"):
+        m = _SCS_ITEM_RE.fullmatch(item)
+        if not m:
+            raise ValueError(f"Invalid SCS entry: {item!r}")
+        sid, src_ref, r1, c1, r2, c2 = m.groups()
+        snippets.append({
+            "id": sid,
+            "source_code": {"id": src.get(src_ref, src_ref)},
+            "start_position": {"row": int(r1), "column": int(c1)},
+            "end_position": {"row": int(r2), "column": int(c2)},
+            "lineage_version_timestamps": [],
+        })
+    return snippets
+
+
+# "@U<n>" reference to an entry of the URL section. In "ch" it is the whole
+# third slot (template with "{id}"); inside a CA/PA/SA "href" value it is
+# followed by the rest of the URL, which always starts with "/".
+_URL_TEMPLATE_REF = re.compile(r"@(U\d+)")
+_URL_PREFIX_REF = re.compile(r"@(U\d+)(/.*)", re.DOTALL)
+
+
+def _url_piece_ok(s: str) -> bool:
+    """A URL fragment that can be written verbatim on a line of the URL section
+    and inside a JSON string: no whitespace/control chars, quotes, backslashes
+    nor a literal "{id}" placeholder."""
+    return not any(c.isspace() or c in '"\\' or ord(c) < 32 for c in s) and "{id}" not in s
+
+
+def _map_hrefs(obj: Any, fn: Any) -> Any:
+    """Copy of ``obj`` where every string value stored under an "href" key (at
+    any depth) is replaced by ``fn(value)``. Key order is preserved."""
+    if isinstance(obj, dict):
+        return {
+            k: fn(v) if k == "href" and isinstance(v, str) else _map_hrefs(v, fn)
+            for k, v in obj.items()
+        }
+    if isinstance(obj, list):
+        return [_map_hrefs(x, fn) for x in obj]
+    return obj
+
+
+def _collect_hrefs(obj: Any, out: List[str]) -> None:
+    """Append every string "href" value found in ``obj`` (any depth) to ``out``."""
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if k == "href" and isinstance(v, str):
+                out.append(v)
+            else:
+                _collect_hrefs(v, out)
+    elif isinstance(obj, list):
+        for x in obj:
+            _collect_hrefs(x, out)
+
+
+def _choose_url_templates(
+    items: List[Tuple[str, str]],
+    max_templates: int = 16,
+) -> Tuple[List[str], List[Optional[int]]]:
+    """Pick URL templates for ``(node id, href)`` pairs where the href contains
+    the node id: ``href == prefix + id + suffix``. Pairs are grouped by
+    ``(prefix, suffix)`` and a group becomes a template (``prefix{id}suffix``)
+    only when writing it once is shorter than repeating it. Returns
+    (templates, per-item template index or None)."""
+    groups: Dict[Tuple[str, str], List[int]] = {}
+    for i, (node_id, href) in enumerate(items):
+        pos = href.find(node_id) if node_id else -1
+        if pos == -1:
+            continue
+        prefix, suffix = href[:pos], href[pos + len(node_id):]
+        # A value ending with ":" could be mistaken for a section header.
+        if (_url_piece_ok(prefix) and _url_piece_ok(suffix) and _url_piece_ok(node_id)
+                and not suffix.endswith(":")):
+            groups.setdefault((prefix, suffix), []).append(i)
+
+    ranked = sorted(groups.items(), key=lambda kv: -sum(len(items[i][1]) for i in kv[1]))
+    templates: List[str] = []
+    assigned: List[Optional[int]] = [None] * len(items)
+    for (prefix, suffix), users in ranked:
+        key_len = len(f"U{len(templates) + 1}")
+        template = f"{prefix}{{id}}{suffix}"
+        gain = sum(len(items[i][1]) - (1 + key_len) for i in users) - (key_len + 1 + len(template) + 1)
+        if gain <= 0:
+            continue
+        for i in users:
+            assigned[i] = len(templates)
+        templates.append(template)
+        if len(templates) >= max_templates:
+            break
+    return templates, assigned
+
+
+def _choose_url_prefixes(
+    hrefs: List[str],
+    first_n: int,
+    max_prefixes: int = 16,
+) -> Tuple[List[str], List[Optional[str]]]:
+    """Pick shared href prefixes greedily by net gain, like
+    ``_choose_ik_prefixes``. A prefix is cut right *before* a "/", so the rest
+    of the URL always starts with "/" and "@U<n>" + rest is unambiguous.
+    ``first_n`` is the number of the first ``U<n>`` key the prefixes will get.
+    Returns (used prefixes, per-href prefix or None)."""
+    users: Dict[str, List[int]] = {}
+    for i, href in enumerate(hrefs):
+        pos = href.find("/")
+        while pos != -1:
+            if pos > 0:
+                users.setdefault(href[:pos], []).append(i)
+            pos = href.find("/", pos + 1)
+    users = {
+        p: u for p, u in users.items()
+        if len(u) >= 2 and _url_piece_ok(p) and not p.endswith(":")
+    }
+
+    cur = [0] * len(hrefs)
+    assigned: List[Optional[str]] = [None] * len(hrefs)
+    chosen: List[str] = []
+    for n in range(first_n, first_n + max_prefixes):
+        key_len = len(f"U{n}")
+        best: Optional[str] = None
+        best_gain = 0
+        for p, us in users.items():
+            if p in chosen:
+                continue
+            length = len(p)
+            gain = -(key_len + 1 + length + 1)  # the "U<n>=<prefix>" line
+            for i in us:
+                if length > cur[i]:
+                    gain += length - cur[i]
+                    if assigned[i] is None:
+                        gain -= 1 + key_len  # the "@U<n>" reference
+            if gain > best_gain:
+                best, best_gain = p, gain
+        if best is None:
+            break
+        chosen.append(best)
+        for i in users[best]:
+            if len(best) > cur[i]:
+                cur[i] = len(best)
+                assigned[i] = best
+    in_use = set(assigned)
+    return [p for p in chosen if p in in_use], assigned
+
+
+def _choose_url_aliases(
+    ch_items: List[Tuple[str, str]],
+    blob_hrefs: List[str],
+    header_cost: int,
+) -> Tuple[Dict[str, str], List[Optional[str]], Dict[str, str]]:
+    """Build the URL section: templates for ``children.href`` (``ch_items`` are
+    ``(node id, href)``) followed by prefixes for the hrefs inside CA/PA/SA
+    blobs. The section is dropped entirely unless the total net gain beats
+    ``header_cost`` (its header line and separator).
+
+    Returns (URL entries, per ch item key "U<n>" or None, aliased blob href
+    -> "@U<n><rest>")."""
+    templates, t_assigned = _choose_url_templates(ch_items)
+    prefixes, p_assigned = _choose_url_prefixes(blob_hrefs, len(templates) + 1)
+    t_keys = [f"U{n}" for n in range(1, len(templates) + 1)]
+    p_keys = [f"U{n}" for n in range(len(templates) + 1, len(templates) + len(prefixes) + 1)]
+    key_of_prefix = dict(zip(prefixes, p_keys))
+
+    gain = -sum(len(k) + 1 + len(v) + 1 for k, v in zip(t_keys + p_keys, templates + prefixes))
+    for (_, href), a in zip(ch_items, t_assigned):
+        if a is not None:
+            gain += len(href) - 1 - len(t_keys[a])
+    for p in p_assigned:
+        if p is not None:
+            gain += len(p) - 1 - len(key_of_prefix[p])
+    if not (templates or prefixes) or gain <= header_cost:
+        return {}, [None] * len(ch_items), {}
+
+    url = dict(zip(t_keys + p_keys, templates + prefixes))
+    ch_keys = [t_keys[a] if a is not None else None for a in t_assigned]
+    href_alias = {
+        h: f"@{key_of_prefix[p]}{h[len(p):]}"
+        for h, p in zip(blob_hrefs, p_assigned) if p is not None
+    }
+    return url, ch_keys, href_alias
 
 
 def _choose_node_defaults(node_tokens: List[List[Tuple[str, str]]]) -> List[Tuple[str, str]]:
@@ -409,6 +668,16 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, An
               mechanisms that remove repeated values from the output (see
               .planning/ldf-aliases-plan.md). False keeps the legacy,
               fully expanded form. The decoder reads both forms.
+            - 'no_urls': boolean flag (default False). Removes every URL
+              from the output: the ``href`` field wherever it occurs
+              (``children.href`` and hrefs inside the catalog / project /
+              space assignments). Equivalent to adding ``"href"`` to
+              'exclude_fields'; no ``URL`` section is written.
+            - 'legend': boolean flag (default False). Adds a ``LEGEND``
+              section as the first section: one ``<SECTION>=<expansion>`` line
+              (e.g. ``HP=Hierarchical path``) for every abbreviated section
+              present in the output. Purely informational; the decoder
+              ignores it.
             - 'exclude_fields': list of str, fields removed from the input
               before serialization (default: empty, output unchanged).
               A name without a dot ("children") removes that field at every
@@ -426,6 +695,12 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, An
     compact = options.get("compact", False) if options else False
     aliases = options.get("aliases", True) if options else True
     exclude_fields = options.get("exclude_fields") if options else None
+    no_urls = options.get("no_urls", False) if options else False
+    legend = options.get("legend", False) if options else False
+    if no_urls and not isinstance(exclude_fields, str):
+        # Shorthand for excluding "href" at every nesting level. A str is left
+        # alone so _apply_exclusions rejects it like any other bad exclude_fields.
+        exclude_fields = list(exclude_fields or []) + ["href"]
     # True only when some field was actually removed (see opt() below); an
     # empty list or a list matching nothing keeps the output byte-identical.
     excluding = False
@@ -601,6 +876,7 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, An
     hp_entries: Dict[str, str] = {}
     attr_entries: Dict[str, str] = {}
     scs_entries: Dict[str, str] = {}
+    scs_raw: Dict[str, Any] = {}  # alias -> original snippets (compact form, aliases on)
     ca_entries: Dict[str, str] = {}
     pa_entries: Dict[str, str] = {}
     sa_entries: Dict[str, str] = {}
@@ -610,6 +886,10 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, An
 
     node_heads: List[str] = []
     node_tokens: List[List[Tuple[str, str]]] = []
+    # node index -> (node id, literal href in the third "ch" slot)
+    ch_hrefs: Dict[int, Tuple[str, str]] = {}
+    # CA / PA / SA values, serialized after the URL aliases are chosen
+    blob_values: List[Tuple[Dict[str, str], str, Any]] = []
 
     for asset in assets:
         asset_id = asset["id"]
@@ -706,13 +986,55 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, An
                 for k, v in ch_present
             ]
             if ch_keys == ["count", "has_any", "href"][:len(ch_keys)]:
-                if ch_values:
+                if aliases and len(ch_keys) == 3 and (
+                    ch_values[2].startswith("@") or any(c in ch_values[2] for c in " \r\n")
+                ):
+                    # The literal href would be read as an alias or break the
+                    # space-separated token: keep it in the named, escaped token.
+                    parts.append(("ch", ",".join(ch_values[:2])))
+                    parts.append(("chh", pct_encode(ch_values[2])))
+                elif ch_values:
                     parts.append(("ch", ",".join(ch_values)))
+                    if aliases and len(ch_keys) == 3 and ch_values[2]:
+                        # Candidate for the "@Un" URL template (see below).
+                        ch_hrefs[len(node_tokens)] = (asset_id, ch_values[2])
             else:
                 # A gap would leave an empty slot ("ch=,0,href"): use named tokens.
                 token = {"count": "chc", "has_any": "cha", "href": "chh"}
                 for k, v in zip(ch_keys, ch_values):
                     parts.append((token[k], pct_encode(v) if k == 'href' else v))
+
+        # --- descendant_statistics
+        # ds=has_leaf_children,is_every_child_leaf,number_of_leaf_descendants
+        # (booleans as 0/1). Only keys that are present are written: trailing
+        # ones are dropped, a gap uses the named tokens dsl/dse/dsn. Values of an
+        # unexpected type or unknown keys fall back to a percent-encoded JSON
+        # blob (dsj) so nothing is lost.
+        dstats = asset.get("descendant_statistics")
+        if dstats is not None:
+            ds_present = [(k, dstats[k]) for k in _DS_KEYS if isinstance(dstats, dict) and k in dstats]
+            ds_regular = (
+                isinstance(dstats, dict)
+                and len(ds_present) == len(dstats)
+                and all(isinstance(v, bool) for k, v in ds_present if k != "number_of_leaf_descendants")
+                and all(
+                    isinstance(v, int) and not isinstance(v, bool)
+                    for k, v in ds_present if k == "number_of_leaf_descendants"
+                )
+            )
+            if not ds_regular or not ds_present:
+                parts.append(("dsj", pct_encode(json.dumps(dstats, ensure_ascii=False))))
+            else:
+                ds_keys = [k for k, _ in ds_present]
+                ds_values = [
+                    str(v) if k == "number_of_leaf_descendants" else ("1" if v else "0")
+                    for k, v in ds_present
+                ]
+                if ds_keys == list(_DS_KEYS[:len(ds_keys)]):
+                    parts.append(("ds", ",".join(ds_values)))
+                else:
+                    for k, v in zip(ds_keys, ds_values):
+                        parts.append((_DS_TOKENS[k], v))
 
         node_heads.append(head)
         node_tokens.append(parts)
@@ -741,18 +1063,16 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, An
         scs = asset.get("source_code_snippets")
         if scs:
             scs_entries[alias] = json.dumps(scs, ensure_ascii=False).replace("\n", " ")
+            scs_raw[alias] = scs
 
-        ca = asset.get("catalog_assignments")
-        if ca:
-            ca_entries[alias] = json.dumps(ca, ensure_ascii=False).replace("\n", " ")
-
-        pa = asset.get("project_assignments")
-        if pa:
-            pa_entries[alias] = json.dumps(pa, ensure_ascii=False).replace("\n", " ")
-
-        sa = asset.get("space_assignments")
-        if sa:
-            sa_entries[alias] = json.dumps(sa, ensure_ascii=False).replace("\n", " ")
+        for blob_entries, field in (
+            (ca_entries, "catalog_assignments"),
+            (pa_entries, "project_assignments"),
+            (sa_entries, "space_assignments"),
+        ):
+            value = asset.get(field)
+            if value:
+                blob_values.append((blob_entries, alias, value))
 
         # --- DSD section
         dsd = asset.get("data_source_definition_asset")
@@ -807,6 +1127,40 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, An
     ndef_line = ""
     ref_dict: Dict[str, str] = {}
 
+    url_dict: Dict[str, str] = {}
+    src_dict: Dict[str, str] = {}
+    if aliases:
+        # 0. URL templates ("ch" third slot) and prefixes (CA/PA/SA "href")
+        blob_hrefs: List[str] = []
+        for _, _, value in blob_values:
+            _collect_hrefs(value, blob_hrefs)
+        blob_hrefs = [h for h in blob_hrefs if not h.startswith("@")]
+        ch_order = sorted(ch_hrefs)
+        url_dict, ch_url_keys, href_alias = _choose_url_aliases(
+            [ch_hrefs[i] for i in ch_order], blob_hrefs, len("URL:") + len(nl) + len(section_break)
+        )
+        for i, key in zip(ch_order, ch_url_keys):
+            if key is None:
+                continue
+            for pos, (tk, value) in enumerate(node_tokens[i]):
+                if tk == "ch":
+                    href = ch_hrefs[i][1]
+                    node_tokens[i][pos] = ("ch", value[:len(value) - len(href)] + f"@{key}")
+                    break
+    else:
+        href_alias = {}
+
+    def encode_blob_href(h: str) -> str:
+        if h in href_alias:
+            return href_alias[h]
+        # "@@" marks a literal href that starts with "@" (aliases only).
+        return "@" + h if aliases and h.startswith("@") else h
+
+    for blob_entries, blob_alias, value in blob_values:
+        blob_entries[blob_alias] = json.dumps(
+            _map_hrefs(value, encode_blob_href), ensure_ascii=False
+        ).replace("\n", " ")
+
     if aliases:
         # 1. identity_key prefixes
         iks = [dict(tokens).get("ik") for tokens in node_tokens]
@@ -836,6 +1190,21 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, An
                     elif own[key] == value:
                         tokens[:] = [t for t in tokens if t[0] != key]
 
+        # 3a. compact SCS: nodes whose snippets all fit the positional form get
+        # "<id>@Sn@r:c-r:c" entries; source_code ids are written once in SRC.
+        src_key: Dict[str, str] = {}
+        for scs_alias, snippets in scs_raw.items():
+            parsed = [_scs_compact_parts(s) for s in snippets] if isinstance(snippets, list) else [None]
+            if not parsed or any(p is None for p in parsed):
+                continue  # keeps the JSON entry
+            items = []
+            for sid, src_id, pos in parsed:  # type: ignore[misc]
+                if src_id not in src_key:
+                    src_key[src_id] = f"S{len(src_key) + 1}"
+                items.append(f"{sid}@{src_key[src_id]}@{pos}")
+            scs_entries[scs_alias] = "|".join(items)
+        src_dict = {k: v for v, k in src_key.items()}
+
         # 3. "*" defaults and the shared REF pool for per-node sections
         all_aliases = [alias_map[a["id"]] for a in assets]
         hp_entries = _apply_default(hp_entries, all_aliases)
@@ -854,30 +1223,43 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, An
 
     # ------------------------------------------------------------------ assemble
 
-    sections = [
-        GRAPH,
-        START,
-        E,
-        EP,
-        NDEF,
-        dict_section("IKP", ikp_dict),
-        N,
-        dict_section("T", t_dict),
-        dict_section("TID", tid_dict),
-        dict_section("ID", id_dict),
-        dict_section("NAME", name_dict),
-        dict_section("BT", bt_dict),
-        dict_section("BC", bc_dict),
-        dict_section("DC", dc_dict),
-        kv_section("HP", hp_entries),
-        kv_section("ATTR", attr_entries),
-        kv_section("SCS", scs_entries),
-        kv_section("CA", ca_entries),
-        kv_section("PA", pa_entries),
-        kv_section("SA", sa_entries),
-        kv_section("DSD", dsd_entries),
-        dict_section("REF", ref_dict),
+    named_sections = [
+        ("GRAPH", GRAPH),
+        ("START", START),
+        ("E", E),
+        ("EP", EP),
+        ("NDEF", NDEF),
+        ("IKP", dict_section("IKP", ikp_dict)),
+        ("N", N),
+        ("T", dict_section("T", t_dict)),
+        ("TID", dict_section("TID", tid_dict)),
+        ("ID", dict_section("ID", id_dict)),
+        ("URL", dict_section("URL", url_dict)),
+        ("SRC", dict_section("SRC", src_dict)),
+        ("NAME", dict_section("NAME", name_dict)),
+        ("BT", dict_section("BT", bt_dict)),
+        ("BC", dict_section("BC", bc_dict)),
+        ("DC", dict_section("DC", dc_dict)),
+        ("HP", kv_section("HP", hp_entries)),
+        ("ATTR", kv_section("ATTR", attr_entries)),
+        ("SCS", kv_section("SCS", scs_entries)),
+        ("CA", kv_section("CA", ca_entries)),
+        ("PA", kv_section("PA", pa_entries)),
+        ("SA", kv_section("SA", sa_entries)),
+        ("DSD", kv_section("DSD", dsd_entries)),
+        ("REF", dict_section("REF", ref_dict)),
     ]
+    sections = [text for _, text in named_sections]
+
+    if legend:
+        # First section: a reader meets the expansions before the data that
+        # uses the abbreviations. One line per abbreviation present.
+        legend_lines = [
+            f"{name}={_SECTION_LEGEND[name]}"
+            for name, text in named_sections
+            if text and name in _SECTION_LEGEND
+        ]
+        sections.insert(0, "LEGEND:" + nl + nl.join(legend_lines))
 
     return section_break.join(s for s in sections if s)
 
@@ -970,7 +1352,7 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
     # Per-node blob sections
     HP = parse_dict("HP")    # N1 -> "id:name:type|..."
     ATTR = parse_dict("ATTR")  # N1 -> "name:value|..."
-    SCS = parse_dict("SCS")  # N1 -> json string
+    SCS = parse_dict("SCS")  # N1 -> json string, or compact "<id>@S1@r:c-r:c|..."
     CA = parse_dict("CA")    # N1 -> json string
     PA = parse_dict("PA")    # N1 -> json string
     SA = parse_dict("SA")    # N1 -> json string
@@ -981,8 +1363,14 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
     #   REF  : R1 -> encoded value shared by ATTR / HP / DSD entries ("@R1")
     #   IKP  : P1 -> encoded identity_key prefix (node token "ikp=P1")
     #   NDEF : default node tokens, inherited by nodes that do not carry them
+    #   URL  : U1 -> children.href template ("{id}" = node id, node token
+    #          "ch=count,has_any,@U1") or href prefix ("@U2/rest" in the CA / PA /
+    #          SA blobs; a literal href starting with "@" is written "@@...")
+    #   SRC  : S1 -> source_code id shared by compact SCS entries
     REF = parse_dict("REF")
+    SRC = parse_dict("SRC")
     IKP = parse_dict("IKP")
+    URL = parse_dict("URL")
 
     ndef_kv: Dict[str, str] = {}
     for raw_line in sections.get("NDEF", []):
@@ -990,6 +1378,15 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
             eq = token.find("=")
             if eq > 0:
                 ndef_kv[token[:eq]] = token[eq + 1:]
+
+    def restore_href(h: str) -> str:
+        """Reverse the href aliasing of CA / PA / SA blobs."""
+        if h.startswith("@@"):
+            return h[1:]
+        m = _URL_PREFIX_REF.fullmatch(h)
+        if m and m.group(1) in URL:
+            return URL[m.group(1)] + m.group(2)
+        return h
 
     def deref(value: str, depth: int = 0) -> str:
         """Expand "@Rn" references of a "|"-separated entry value.
@@ -1192,7 +1589,13 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
             if len(ch_parts) > 1:
                 children["has_any"] = ch_parts[1] == "1"
             if len(ch_parts) > 2:
-                children["href"] = ch_parts[2]
+                href = ch_parts[2]
+                m = _URL_TEMPLATE_REF.fullmatch(href)
+                if m and m.group(1) in URL:
+                    href = URL[m.group(1)].replace("{id}", asset_id)
+                children["href"] = href
+            if "chh" in node_kv:
+                children["href"] = pct_decode(node_kv["chh"])
         elif any(k in node_kv for k in ("chc", "cha", "chh")):
             # Named tokens: written when excluded fields left a gap.
             children = {}
@@ -1202,6 +1605,26 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
                 children["has_any"] = node_kv["cha"] == "1"
             if "chh" in node_kv:
                 children["href"] = pct_decode(node_kv["chh"])
+
+        # descendant_statistics (ds=a,b,c | dsl/dse/dsn | dsj=<json>)
+        descendant_statistics: Optional[Dict[str, Any]] = None
+        if "dsj" in node_kv:
+            descendant_statistics = json.loads(pct_decode(node_kv["dsj"]))
+        elif "ds" in node_kv:
+            ds_parts = node_kv["ds"].split(",")
+            descendant_statistics = {}
+            for k, raw in zip(_DS_KEYS, ds_parts):
+                descendant_statistics[k] = (
+                    int(raw) if k == "number_of_leaf_descendants" else raw == "1"
+                )
+        elif any(k in node_kv for k in _DS_TOKENS.values()):
+            descendant_statistics = {}
+            for k in _DS_KEYS:
+                raw = node_kv.get(_DS_TOKENS[k])
+                if raw is not None:
+                    descendant_statistics[k] = (
+                        int(raw) if k == "number_of_leaf_descendants" else raw == "1"
+                    )
 
         # Hierarchical path
         # Encoding: "id:name:type|...".
@@ -1248,10 +1671,13 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
                     attributes.append({"name": attr_seg})
 
         # JSON blob sections
-        source_code_snippets: List[Any] = json.loads(SCS[alias]) if alias in SCS else []
-        catalog_assignments: List[Any] = json.loads(CA[alias]) if alias in CA else []
-        project_assignments: List[Any] = json.loads(PA[alias]) if alias in PA else []
-        space_assignments: List[Any] = json.loads(SA[alias]) if alias in SA else []
+        source_code_snippets: List[Any] = _scs_expand(SCS[alias], SRC) if alias in SCS else []
+        def load_blob(blobs: Dict[str, str]) -> List[Any]:
+            return _map_hrefs(json.loads(blobs[alias]), restore_href) if alias in blobs else []
+
+        catalog_assignments: List[Any] = load_blob(CA)
+        project_assignments: List[Any] = load_blob(PA)
+        space_assignments: List[Any] = load_blob(SA)
 
         # Data source definition asset
         data_source_definition_asset: Optional[Dict[str, str]] = None
@@ -1289,10 +1715,13 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
             "identity_key": identity_key,
             "origin": origin,
             "project_assignments": project_assignments,
-            "resource_key": resource_key,
             "space_assignments": space_assignments,
             "tags": tags,
         }
+        if resource_key is not None:
+            asset["resource_key"] = resource_key
+        if descendant_statistics is not None:
+            asset["descendant_statistics"] = descendant_statistics
         if technology is not None:
             asset["technology"] = technology
         if data_source_definition_asset is not None:
@@ -1318,7 +1747,9 @@ def convert_json_file_to_lineage(
     output_path: str,
     compact: bool = False,
     exclude_fields: Optional[List[str]] = None,
-    aliases: bool = True
+    aliases: bool = True,
+    no_urls: bool = False,
+    legend: bool = False
 ) -> None:
     """
     Convert a backend LineageGraph JSON file to a lineage format (.ldf) file.
@@ -1329,10 +1760,16 @@ def convert_json_file_to_lineage(
         compact: Whether to use compact format (no extra whitespace)
         exclude_fields: Fields to remove from the input (see json_to_lineage_format)
         aliases: Whether to use alias compression (see json_to_lineage_format)
+        no_urls: Drop every URL ("href") from the output (see json_to_lineage_format)
+        legend: Add a LEGEND section that spells out the section abbreviations
     """
     with open(input_path, "r", encoding="utf-8") as f:
         data = json.load(f)
     options: Dict[str, Any] = {"compact": compact, "aliases": aliases}
+    if no_urls:
+        options["no_urls"] = True
+    if legend:
+        options["legend"] = True
     if exclude_fields:
         options["exclude_fields"] = exclude_fields
     formatted = json_to_lineage_format(data, options)
