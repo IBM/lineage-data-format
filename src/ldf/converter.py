@@ -5,6 +5,7 @@ Provides functions to convert between JSON and lineage format.
 
 import json
 import logging
+from collections import Counter
 from fnmatch import fnmatchcase
 from typing import Dict, List, Any, Optional, Set, Tuple
 
@@ -132,6 +133,265 @@ def _apply_exclusions(graph: Dict[str, Any], exclude_fields: List[str]) -> Tuple
 
     return result, bool(hits)
 
+# ---------------------------------------------------------------------------
+# Alias compression helpers (used when options["aliases"] is on)
+# ---------------------------------------------------------------------------
+
+# Node-line tokens that may get a default value in the NDEF section.
+_NDEF_KEYS = ("rk", "origin", "path", "tags", "bt", "bc", "dc", "flags",
+              "ch", "chc", "cha", "chh")
+
+
+def _choose_ik_prefixes(
+    iks: List[Optional[str]],
+    max_prefixes: int = 16,
+) -> Tuple[List[str], List[Optional[str]]]:
+    """Pick shared identity_key prefixes (cut after a "/") greedily by net gain.
+
+    ``iks`` are already percent-encoded; "/" is never encoded, so a cut after
+    it never splits an escape sequence. Returns (used prefixes, per-node
+    prefix or None). A node uses the longest chosen prefix it starts with.
+    """
+    users: Dict[str, List[int]] = {}
+    for i, ik in enumerate(iks):
+        if not ik:
+            continue
+        pos = ik.find("/")
+        while pos != -1:
+            users.setdefault(ik[:pos + 1], []).append(i)
+            pos = ik.find("/", pos + 1)
+    users = {p: u for p, u in users.items() if len(u) >= 2}
+
+    cur = [0] * len(iks)  # length of the prefix a node currently uses
+    assigned: List[Optional[str]] = [None] * len(iks)
+    chosen: List[str] = []
+    for n in range(1, max_prefixes + 1):
+        key_len = len(f"P{n}")
+        best: Optional[str] = None
+        best_gain = 0
+        for p, us in users.items():
+            if p in chosen:
+                continue
+            length = len(p)
+            gain = -(key_len + 1 + length + 1)  # the "P1=<prefix>" line
+            for i in us:
+                if length > cur[i]:
+                    gain += length - cur[i]
+                    if assigned[i] is None:
+                        gain -= len(" ikp=") + key_len
+            if gain > best_gain:
+                best, best_gain = p, gain
+        if best is None:
+            break
+        chosen.append(best)
+        for i in users[best]:
+            if len(best) > cur[i]:
+                cur[i] = len(best)
+                assigned[i] = best
+    in_use = set(assigned)
+    return [p for p in chosen if p in in_use], assigned
+
+
+def _choose_node_defaults(node_tokens: List[List[Tuple[str, str]]]) -> List[Tuple[str, str]]:
+    """Most common value of each node-line token, kept only when writing it
+    once in NDEF (and an empty "key=" on nodes that lack it) is shorter than
+    repeating it on every node."""
+    maps = [dict(tokens) for tokens in node_tokens]
+    n = len(maps)
+    defaults: List[Tuple[str, str]] = []
+    total = 0
+    for key in _NDEF_KEYS:
+        values = [m[key] for m in maps if key in m]
+        # An empty value cannot be told apart from the "key=" removal token and
+        # a value with a space would break the space-separated NDEF line.
+        if not values or any(v == "" or " " in v for v in values):
+            continue
+        value, count = Counter(values).most_common(1)[0]
+        absent = n - len(values)
+        token_len = len(key) + len(value) + 2  # " key=value"
+        gain = count * token_len - absent * (len(key) + 2) - token_len
+        if gain > 0:
+            defaults.append((key, value))
+            total += gain
+    return defaults if total > len("NDEF:") + 3 else []
+
+
+def _apply_default(entries: Dict[str, str], all_aliases: List[str]) -> Dict[str, str]:
+    """Replace the most common per-node value by a "*" entry. Nodes with
+    another value keep it; nodes without an entry get an explicit empty one."""
+    counter = Counter(v for v in entries.values() if v)
+    if not counter:
+        return entries
+    value, count = counter.most_common(1)[0]
+    if count < 2:
+        return entries
+    saved = sum(len(a) + len(value) + 2 for a in all_aliases if entries.get(a) == value)
+    cost = len("*=") + len(value) + 1 + sum(len(a) + 2 for a in all_aliases if a not in entries)
+    if saved <= cost:
+        return entries
+    out: Dict[str, str] = {"*": value}
+    for a in all_aliases:
+        v = entries.get(a)
+        if v != value:
+            out[a] = v if v is not None else ""
+    return out
+
+
+def _build_ref_pool(
+    sections: Dict[str, Dict[str, str]],
+) -> Tuple[Dict[str, Dict[str, str]], Dict[str, str]]:
+    """Move repeated values of per-node sections into a shared REF pool.
+
+    A repeated whole entry value, or a repeated "|"-separated element, is
+    replaced by "@Rn". The definition of a multi-element value refers to its
+    element aliases, which the decoder expands recursively.
+    """
+    values: Counter = Counter()
+    reserved: Set[str] = set()
+    for entries in sections.values():
+        for v in entries.values():
+            if not v:
+                continue
+            values[v] += 1
+            for el in v.split("|"):
+                if el.startswith("@"):
+                    reserved.add(el)
+
+    ref_of: Dict[str, str] = {}
+    idx = [0]
+
+    def new_key() -> str:
+        # A literal element that already looks like "@Rn" must never be
+        # confused with a reference, so such keys are skipped.
+        while True:
+            idx[0] += 1
+            key = f"R{idx[0]}"
+            if f"@{key}" not in reserved:
+                return key
+
+    def worth(count: int, length: int) -> bool:
+        key_len = len(str(idx[0] + 1)) + 1
+        return count * (length - (key_len + 1)) - (key_len + 1 + length + 1) > 0
+
+    # 1. whole entry values that repeat
+    for v, c in sorted(values.items(), key=lambda kv: -kv[1] * len(kv[0])):
+        if c >= 2 and worth(c, len(v)):
+            ref_of[v] = new_key()
+    wholes = list(ref_of)
+
+    # 2. single elements that repeat (a multi-element whole is defined once)
+    elements: Counter = Counter()
+    for entries in sections.values():
+        for v in entries.values():
+            if v and v not in ref_of:
+                for el in v.split("|"):
+                    if el:
+                        elements[el] += 1
+    for v in wholes:
+        if "|" in v:
+            for el in v.split("|"):
+                if el:
+                    elements[el] += 1
+    for el, c in sorted(elements.items(), key=lambda kv: -kv[1] * len(kv[0])):
+        if el not in ref_of and c >= 2 and worth(c, len(el)):
+            ref_of[el] = new_key()
+
+    def by_element(v: str) -> str:
+        return "|".join("@" + ref_of[el] if el in ref_of else el for el in v.split("|"))
+
+    def sub(v: str) -> str:
+        if not v:
+            return v
+        return "@" + ref_of[v] if v in ref_of else by_element(v)
+
+    defs = {key: (by_element(v) if "|" in v else v) for v, key in ref_of.items()}
+    defs = dict(sorted(defs.items(), key=lambda kv: int(kv[0][1:])))
+    new_sections = {name: {a: sub(v) for a, v in entries.items()}
+                    for name, entries in sections.items()}
+    return new_sections, defs
+
+
+def _encode_edges(
+    edges_raw: List[Dict[str, Any]],
+    alias_map: Dict[str, str],
+) -> Tuple[List[str], List[str]]:
+    """E and EP lines with edges grouped by source ("N1>N2,N3") and default
+    edge types. Sources keep first-occurrence order and targets keep their
+    original order, so the set of edges and their types survive a roundtrip
+    (the order of the list across sources does not)."""
+    order: List[Any] = []
+    seen: Set[str] = set()
+    targets: Dict[str, List[Tuple[str, str]]] = {}
+    ends: Dict[str, List[str]] = {}
+    solo: Dict[int, Tuple[str, str, str]] = {}
+    for i, edge in enumerate(edges_raw):
+        src_raw = edge.get("source", "")
+        tgt_raw = edge.get("target", "")
+        etype = edge.get("type") or ""
+        if src_raw in alias_map and (not tgt_raw or tgt_raw in alias_map):
+            src = alias_map[src_raw]
+            if src not in seen:
+                seen.add(src)
+                order.append(src)
+            if tgt_raw:
+                targets.setdefault(src, []).append((alias_map[tgt_raw], etype))
+            else:
+                ends.setdefault(src, []).append(etype)
+        else:
+            # Unknown ids are written as a separate line, as in the legacy form.
+            order.append(i)
+            solo[i] = (alias_map.get(src_raw, src_raw), alias_map.get(tgt_raw, tgt_raw), etype)
+
+    e_lines: List[str] = []
+    emitted: List[Tuple[str, bool, str]] = []  # (pair, has_target, type) in E order
+    for key in order:
+        if isinstance(key, int):
+            src, tgt, etype = solo[key]
+            pair = f"{src}>{tgt}" if tgt else src
+            e_lines.append(pair)
+            emitted.append((pair, bool(tgt), etype))
+            continue
+        group = targets.get(key)
+        if group:
+            e_lines.append(f"{key}>{','.join(t for t, _ in group)}")
+            for t, et in group:
+                emitted.append((f"{key}>{t}", True, et))
+        for et in ends.get(key, []):
+            e_lines.append(key)
+            emitted.append((key, False, et))
+
+    default_line = {True: "*>*", False: "*"}
+    default_lines: List[str] = []
+    explicit: Set[int] = set()
+    for kind in (True, False):
+        idxs = [i for i, (_, k, _) in enumerate(emitted) if k == kind]
+        if not idxs:
+            continue
+        candidates = [""] + sorted({emitted[i][2] for i in idxs} - {""})
+        best: Optional[Tuple[int, str, List[int]]] = None
+        for cand in candidates:
+            # The decoder hands a pair's explicit entries out in E order, so
+            # every edge up to the pair's last non-default one needs its own.
+            last: Dict[str, int] = {}
+            for i in idxs:
+                if emitted[i][2] != cand:
+                    last[emitted[i][0]] = i
+            incl = [i for i in idxs if emitted[i][0] in last and i <= last[emitted[i][0]]]
+            cost = sum(len(emitted[i][0]) + len(" etype=") + len(emitted[i][2]) + 1 for i in incl)
+            if cand:
+                cost += len(default_line[kind]) + len(" etype=") + len(cand) + 1
+            if best is None or cost < best[0]:
+                best = (cost, cand, incl)
+        assert best is not None
+        if best[1]:
+            default_lines.append(f"{default_line[kind]} etype={best[1]}")
+        explicit.update(best[2])
+
+    ep_lines = default_lines + [f"{emitted[i][0]} etype={emitted[i][2]}" for i in sorted(explicit)]
+    return e_lines, ep_lines
+
+
+
 
 def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, Any]] = None) -> str:
     """
@@ -164,7 +424,7 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, An
         String in lineage format
     """
     compact = options.get("compact", False) if options else False
-    aliases = options.get("aliases", True) if options else True  # noqa: F841 (used by later alias stages)
+    aliases = options.get("aliases", True) if options else True
     exclude_fields = options.get("exclude_fields") if options else None
     # True only when some field was actually removed (see opt() below); an
     # empty list or a list matching nothing keeps the output byte-identical.
@@ -348,7 +608,8 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, An
 
     # ------------------------------------------------------------------ node lines
 
-    node_lines: List[str] = []
+    node_heads: List[str] = []
+    node_tokens: List[List[Tuple[str, str]]] = []
 
     for asset in assets:
         asset_id = asset["id"]
@@ -403,26 +664,28 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, An
         # When "type" is excluded the head token is the bare alias (no ":").
         raw_type = opt(asset, "type", "")
         head = alias if raw_type is _ABSENT else f"{alias}:{pct_encode(raw_type)}"
-        parts: List[str] = [head]
+        # Tokens are kept as (key, value) pairs so the alias stage can factor
+        # out defaults; without aliases they are joined exactly as before.
+        parts: List[Tuple[str, str]] = []
         if asset.get("resource_key"):
-            parts.append(f"rk={pct_encode(asset['resource_key'])}")
+            parts.append(("rk", pct_encode(asset['resource_key'])))
         if asset.get("origin"):
-            parts.append(f"origin={pct_encode(asset['origin'])}")
+            parts.append(("origin", pct_encode(asset['origin'])))
         if asset.get("identity_key"):
-            parts.append(f"ik={pct_encode(asset['identity_key'])}")
+            parts.append(("ik", pct_encode(asset['identity_key'])))
         if tech_alias:
-            parts.append(f"path={tech_alias}")
+            parts.append(("path", tech_alias))
         tags = asset.get("tags") or []
         if tags:
-            parts.append(f"tags={encode_array([pct_encode(tag) for tag in tags])}")
+            parts.append(("tags", encode_array([pct_encode(tag) for tag in tags])))
         if bt_aliases:
-            parts.append(f"bt={encode_array(bt_aliases)}")
+            parts.append(("bt", encode_array(bt_aliases)))
         if bc_aliases:
-            parts.append(f"bc={encode_array(bc_aliases)}")
+            parts.append(("bc", encode_array(bc_aliases)))
         if dc_aliases:
-            parts.append(f"dc={encode_array(dc_aliases)}")
+            parts.append(("dc", encode_array(dc_aliases)))
         if flags:
-            parts.append(f"flags={flags}")
+            parts.append(("flags", str(flags)))
         if children is not None:
             # Use comma as separator: ch=count,has_any,href
             # (href may contain colons from URLs, comma never appears in count/has_any/href)
@@ -444,14 +707,15 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, An
             ]
             if ch_keys == ["count", "has_any", "href"][:len(ch_keys)]:
                 if ch_values:
-                    parts.append("ch=" + ",".join(ch_values))
+                    parts.append(("ch", ",".join(ch_values)))
             else:
                 # A gap would leave an empty slot ("ch=,0,href"): use named tokens.
                 token = {"count": "chc", "has_any": "cha", "href": "chh"}
                 for k, v in zip(ch_keys, ch_values):
-                    parts.append(f"{token[k]}={pct_encode(v) if k == 'href' else v}")
+                    parts.append((token[k], pct_encode(v) if k == 'href' else v))
 
-        node_lines.append(" ".join(parts))
+        node_heads.append(head)
+        node_tokens.append(parts)
 
         # --- HP section
         # Format: "id:name:type|id:name:type".
@@ -522,21 +786,71 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, An
     edge_lines: List[str] = []
     ep_lines: List[str] = []
 
-    for edge in edges_raw:
-        src_alias = alias_map.get(edge.get("source", ""), edge.get("source", ""))
-        tgt_alias = alias_map.get(edge.get("target", ""), edge.get("target", ""))
-        # An end edge (no target) is written as just the source alias: "N7", not "N7>".
-        pair = f"{src_alias}>{tgt_alias}" if tgt_alias else src_alias
-        edge_lines.append(pair)
-        if edge.get("type"):
-            ep_lines.append(f"{pair} etype={edge['type']}")
+    if aliases:
+        edge_lines, ep_lines = _encode_edges(edges_raw, alias_map)
+    else:
+        for edge in edges_raw:
+            src_alias = alias_map.get(edge.get("source", ""), edge.get("source", ""))
+            tgt_alias = alias_map.get(edge.get("target", ""), edge.get("target", ""))
+            # An end edge (no target) is written as just the source alias: "N7", not "N7>".
+            pair = f"{src_alias}>{tgt_alias}" if tgt_alias else src_alias
+            edge_lines.append(pair)
+            if edge.get("type"):
+                ep_lines.append(f"{pair} etype={edge['type']}")
 
     E = "E:" + nl + nl.join(edge_lines) if edge_lines else ""
     EP = "EP:" + nl + nl.join(ep_lines) if ep_lines else ""
 
     # ------------------------------------------------------------------ N section
 
+    ikp_dict: Dict[str, str] = {}
+    ndef_line = ""
+    ref_dict: Dict[str, str] = {}
+
+    if aliases:
+        # 1. identity_key prefixes
+        iks = [dict(tokens).get("ik") for tokens in node_tokens]
+        prefixes, assigned = _choose_ik_prefixes(iks)
+        pkey = {p: f"P{n}" for n, p in enumerate(prefixes, 1)}
+        ikp_dict = {k: p for p, k in pkey.items()}
+        for tokens, prefix in zip(node_tokens, assigned):
+            if prefix is None:
+                continue
+            for pos, (key, value) in enumerate(tokens):
+                if key == "ik":
+                    new = [("ikp", pkey[prefix])]
+                    if value[len(prefix):]:
+                        new.append(("ik", value[len(prefix):]))
+                    tokens[pos:pos + 1] = new
+                    break
+
+        # 2. default node tokens
+        defaults = _choose_node_defaults(node_tokens)
+        if defaults:
+            ndef_line = " ".join(f"{k}={v}" for k, v in defaults)
+            for tokens in node_tokens:
+                own = dict(tokens)
+                for key, value in defaults:
+                    if key not in own:
+                        tokens.append((key, ""))
+                    elif own[key] == value:
+                        tokens[:] = [t for t in tokens if t[0] != key]
+
+        # 3. "*" defaults and the shared REF pool for per-node sections
+        all_aliases = [alias_map[a["id"]] for a in assets]
+        hp_entries = _apply_default(hp_entries, all_aliases)
+        dsd_entries = _apply_default(dsd_entries, all_aliases)
+        pooled, ref_dict = _build_ref_pool(
+            {"HP": hp_entries, "ATTR": attr_entries, "DSD": dsd_entries}
+        )
+        hp_entries, attr_entries, dsd_entries = pooled["HP"], pooled["ATTR"], pooled["DSD"]
+
+    node_lines = [
+        " ".join([head] + [f"{k}={v}" for k, v in tokens])
+        for head, tokens in zip(node_heads, node_tokens)
+    ]
     N = "N:" + nl + nl.join(node_lines)
+    NDEF = "NDEF:" + nl + ndef_line if ndef_line else ""
 
     # ------------------------------------------------------------------ assemble
 
@@ -545,6 +859,8 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, An
         START,
         E,
         EP,
+        NDEF,
+        dict_section("IKP", ikp_dict),
         N,
         dict_section("T", t_dict),
         dict_section("TID", tid_dict),
@@ -560,6 +876,7 @@ def json_to_lineage_format(graph: Dict[str, Any], options: Optional[Dict[str, An
         kv_section("PA", pa_entries),
         kv_section("SA", sa_entries),
         kv_section("DSD", dsd_entries),
+        dict_section("REF", ref_dict),
     ]
 
     return section_break.join(s for s in sections if s)
@@ -674,12 +991,21 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
             if eq > 0:
                 ndef_kv[token[:eq]] = token[eq + 1:]
 
-    def deref(value: str) -> str:
-        """Expand a "@Rn" reference into its REF value. A "@..." value whose
-        key is not in REF is a plain literal and is returned unchanged."""
-        if value.startswith("@") and value[1:] in REF:
-            return REF[value[1:]]
-        return value
+    def deref(value: str, depth: int = 0) -> str:
+        """Expand "@Rn" references of a "|"-separated entry value.
+
+        An element "@Rn" is replaced by REF[Rn] (which may itself hold several
+        "|"-separated elements and further references). An "@..." element whose
+        key is not in REF is a plain literal and is kept unchanged."""
+        if depth > 16:
+            return value
+        out = []
+        for el in value.split("|"):
+            if el.startswith("@") and el[1:] in REF:
+                out.append(deref(REF[el[1:]], depth + 1))
+            else:
+                out.append(el)
+        return "|".join(out)
 
     # ------------------------------------------------------------------ GRAPH meta
 
@@ -886,10 +1212,9 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
         # A "*" entry is the default for nodes without an own entry.
         hp_raw = HP.get(alias, HP.get("*"))
         if hp_raw is not None:
-            for segment in hp_raw.split("|"):
+            for segment in deref(hp_raw).split("|"):
                 if not segment:
                     continue
-                segment = deref(segment)
                 seg_parts = segment.split(":")
                 hp_item: Dict[str, Any] = {}
                 if "=" in seg_parts[0]:
@@ -912,8 +1237,7 @@ def lineage_format_to_json(input_text: str) -> Dict[str, Any]:
         # value may contain ":" (safe) and "|" (percent-encoded as %7C).
         attributes: List[Dict[str, str]] = []
         if alias in ATTR:
-            for attr_seg in ATTR[alias].split("|"):
-                attr_seg = deref(attr_seg)
+            for attr_seg in deref(ATTR[alias]).split("|"):
                 eq = attr_seg.find("=")
                 if eq != -1:
                     attributes.append({

@@ -15,7 +15,9 @@ lineage-data-format/
 │
 ├── tests/                            # Test suite
 │   ├── __init__.py
-│   └── test_converter.py             # Comprehensive converter tests (64 tests)
+│   ├── test_converter.py             # Comprehensive converter tests
+│   ├── test_exclude_fields.py        # exclude_fields tests (aliases on and off)
+│   └── test_aliases.py               # Alias compression: encoder, decoder, real files
 │
 ├── .github/workflows/ci.yml          # GitHub Actions CI
 ├── pyproject.toml                    # Package configuration (hatchling)

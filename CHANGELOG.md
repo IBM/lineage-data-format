@@ -7,6 +7,29 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.3.0] - 2026-11-03
+
+### Added
+
+- Alias compression, on by default (`aliases` option; `--no-aliases` on the CLI;
+  `aliases` argument of `convert_json_file_to_lineage`). New constructs:
+  `REF` section with `@Rn` references in `HP` / `ATTR` / `DSD`, `*` default entry in
+  `HP` / `DSD`, `IKP` section with `ikp=` node token, `NDEF` section with default node
+  tokens, `E` grouped by source (`N1>N2,N3`), default `EP` lines (`*>* etype=…`,
+  `* etype=…`).
+- The decoder reads all of the above and the older, expanded form.
+
+### Changed
+
+- **The default output is different.** Documents written with the default options are
+  smaller (e.g. 30% / 43% of the previous size on `out.json` / `big_query_lineage.json`)
+  and need a reader from this version. Use `aliases=False` / `--no-aliases` for the
+  0.2.0 form.
+- The order of the edge list is not preserved with `aliases` on. The set of edges and
+  their types is.
+
+---
+
 ## [0.2.0] - 2026-11-02
 
 ### Added

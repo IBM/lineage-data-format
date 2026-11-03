@@ -1,17 +1,24 @@
 """
 Tests for the alias-compression mechanisms of the LDF format.
 
-Stage 1: the decoder reads hand-written documents that use the new
-constructs (REF, IKP, NDEF, "*" defaults, grouped E, default EP) and the
-``aliases`` option / ``--no-aliases`` flag exist. The encoder does not write
-the new constructs yet, so ``aliases`` must not change its output.
+The decoder reads hand-written documents that use the new constructs (REF,
+IKP, NDEF, "*" defaults, grouped E, default EP). The encoder writes them when
+the ``aliases`` option is on (default); ``aliases=False`` / ``--no-aliases``
+gives the legacy, fully expanded text.
 """
 
 import copy
+import json
+import re
 import subprocess
 import sys
+from pathlib import Path
+
+import pytest  # type: ignore
 
 from ldf import json_to_lineage_format, lineage_format_to_json
+
+ROOT = Path(__file__).resolve().parent.parent
 
 
 def edge_key(e):
@@ -33,22 +40,202 @@ N2=two
 N3=three"""
 
 
-class TestEncoderUnchanged:
-    GRAPH = {
-        "assets_in_view": [
-            {"id": "a", "name": "A", "type": "Column", "origin": "design",
-             "identity_key": "x/y[Database]/A[Column]"},
-            {"id": "b", "name": "B", "type": "Column", "origin": "design",
-             "identity_key": "x/y[Database]/B[Column]"},
-        ],
-        "edges_in_view": [{"source": "a", "target": "b", "type": "direct"}],
-    }
+def edge_set(graph):
+    return sorted(json.dumps(e, sort_keys=True) for e in graph["edges_in_view"])
 
-    def test_aliases_option_does_not_change_output_yet(self):
-        default = json_to_lineage_format(copy.deepcopy(self.GRAPH))
-        on = json_to_lineage_format(copy.deepcopy(self.GRAPH), {"aliases": True})
-        off = json_to_lineage_format(copy.deepcopy(self.GRAPH), {"aliases": False})
-        assert default == on == off
+
+def assert_same_graph(a, b):
+    """Same assets in the same order, same set of edges (list order may differ)."""
+    assert a["assets_in_view"] == b["assets_in_view"]
+    assert edge_set(a) == edge_set(b)
+
+
+def many_assets(n=12):
+    """Nodes sharing ik prefix, origin, path, flags, hierarchical path, DSD and
+    repeated attributes (in different order), like a real backend response."""
+    tech = {"id": "tech-1", "name": "Microsoft SQL Server"}
+    dsd = {"id": "dsd-1", "name": "my dsd"}
+    hp = [{"id": "h1", "name": "Database", "type": "Database"}]
+    shared = [
+        {"name": "TRANSFORMATION_TAG", "value": "TRANSFORMING"},
+        {"name": "OBJECT_SOURCE_TYPE", "value": "DEDUCTION"},
+        {"name": "DEDUCTION_ORIGIN", "value": "Microsoft SQL Server'<6,17>AST_SELECTION'"},
+    ]
+    assets = []
+    for i in range(n):
+        attrs = shared[i % 3:] + shared[:i % 3]
+        assets.append({
+            "id": f"id-{i}", "name": f"Asset {i}", "type": "Block",
+            "origin": "design", "technology": tech,
+            "identity_key": f"uuid-1/my dsd[Database]/Asset {i}[Block]",
+            "is_deduced": True, "is_transforming": True, "is_operational": True,
+            "hierarchical_path": hp, "data_source_definition_asset": dsd,
+            "attributes": attrs + [{"name": "Block TYPE", "value": "Block"}],
+        })
+    edges = [{"source": f"id-{i}", "target": f"id-{i + 1}", "type": "direct"} for i in range(n - 1)]
+    edges += [{"source": f"id-{i}", "target": f"id-{i + 2}", "type": "direct"} for i in range(n - 2)]
+    edges += [{"source": f"id-{i}", "type": "summary"} for i in range(n)]
+    return {"assets_in_view": assets, "edges_in_view": edges}
+
+
+class TestEncoder:
+    GRAPH = many_assets()
+
+    def packed(self, **opts):
+        return json_to_lineage_format(copy.deepcopy(self.GRAPH), {"aliases": True, **opts})
+
+    def legacy(self, **opts):
+        return json_to_lineage_format(copy.deepcopy(self.GRAPH), {"aliases": False, **opts})
+
+    def test_default_is_aliases_on(self):
+        assert json_to_lineage_format(copy.deepcopy(self.GRAPH)) == self.packed()
+
+    def test_aliases_off_is_legacy_text(self):
+        text = self.legacy()
+        for section in ("REF:", "IKP:", "NDEF:"):
+            assert section not in text
+        assert "etype=direct" in text and "=origin" not in text
+        assert re.search(r"^N1>N2$", text, re.M)
+
+    @pytest.mark.parametrize("compact", [False, True])
+    def test_roundtrip_matches_legacy_roundtrip(self, compact):
+        packed = lineage_format_to_json(self.packed(compact=compact))
+        legacy = lineage_format_to_json(self.legacy(compact=compact))
+        assert_same_graph(packed, legacy)
+
+    def test_packed_is_much_smaller(self):
+        assert len(self.packed()) < len(self.legacy()) * 0.6
+
+    def test_repeated_values_are_written_once(self):
+        text = self.packed()
+        assert text.count("saas") == 0
+        assert text.count("TRANSFORMING") == 1
+        assert text.count("Microsoft") <= 2
+        assert text.count("etype=direct") == 1
+        assert text.count("origin=design") == 1       # in NDEF only
+        assert text.count("uuid-1/my%20dsd") == 1     # in IKP only
+
+    def test_sections_present(self):
+        text = self.packed()
+        for section in ("NDEF:", "IKP:", "REF:"):
+            assert section in text
+        assert re.search(r"^HP:\n\*=", text, re.M)
+        assert re.search(r"^DSD:\n\*=", text, re.M)
+
+    def test_edges_grouped_by_source_and_end_edges_bare(self):
+        text = self.packed()
+        e = text.split("E:\n", 1)[1].split("\n\n", 1)[0].split("\n")
+        assert e[0] == "N1>N2,N3"
+        assert len([l for l in e if l == "N1"]) == 1
+        assert "*>* etype=direct" in text and "* etype=summary" in text
+
+    def test_ndef_override_and_removal(self):
+        g = copy.deepcopy(self.GRAPH)
+        g["assets_in_view"][0]["origin"] = "runtime"        # differs from default
+        del g["assets_in_view"][1]["origin"]                  # lacks the default token
+        g["assets_in_view"][2]["is_deduced"] = False
+        g["assets_in_view"][2]["is_transforming"] = False
+        g["assets_in_view"][2]["is_operational"] = False      # flags 0, default is 7
+        restored = lineage_format_to_json(json_to_lineage_format(g))
+        assert_same_graph(restored, lineage_format_to_json(json_to_lineage_format(g, {"aliases": False})))
+        a = restored["assets_in_view"]
+        assert a[0]["origin"] == "runtime"
+        legacy = lineage_format_to_json(json_to_lineage_format(g, {"aliases": False}))
+        assert a[1].get("origin") == legacy["assets_in_view"][1].get("origin") != "design"
+        assert not a[2]["is_deduced"] and not a[2]["is_operational"]
+
+    def test_node_without_hp_and_dsd_when_others_have_them(self):
+        g = copy.deepcopy(self.GRAPH)
+        del g["assets_in_view"][3]["hierarchical_path"]
+        del g["assets_in_view"][4]["data_source_definition_asset"]
+        g["assets_in_view"][5]["hierarchical_path"] = [{"id": "h9", "name": "Other", "type": "Schema"}]
+        restored = lineage_format_to_json(json_to_lineage_format(g))
+        a = restored["assets_in_view"]
+        legacy = lineage_format_to_json(json_to_lineage_format(g, {"aliases": False}))["assets_in_view"]
+        assert a[3].get("hierarchical_path") == legacy[3].get("hierarchical_path") != self.GRAPH["assets_in_view"][0]["hierarchical_path"]
+        assert a[4].get("data_source_definition_asset") == legacy[4].get("data_source_definition_asset")
+        assert a[4].get("data_source_definition_asset") != self.GRAPH["assets_in_view"][0]["data_source_definition_asset"]
+        assert a[5]["hierarchical_path"][0]["id"] == "h9"
+        assert a[0]["hierarchical_path"] == self.GRAPH["assets_in_view"][0]["hierarchical_path"]
+
+    def test_repeated_edges_between_same_pair_keep_types(self):
+        g = copy.deepcopy(self.GRAPH)
+        g["edges_in_view"] += [
+            {"source": "id-0", "target": "id-1", "type": "summary"},
+            {"source": "id-0", "target": "id-1"},
+            {"source": "id-0", "target": "id-1", "type": "direct"},
+        ]
+        restored = lineage_format_to_json(json_to_lineage_format(g))
+        assert edge_set(restored) == sorted(json.dumps(e, sort_keys=True) for e in g["edges_in_view"])
+
+    def test_edge_with_unknown_id_survives(self):
+        g = copy.deepcopy(self.GRAPH)
+        g["edges_in_view"].append({"source": "id-0", "target": "ghost", "type": "direct"})
+        restored = lineage_format_to_json(json_to_lineage_format(g))
+        assert {"source": "id-0", "target": "ghost", "type": "direct"} in restored["edges_in_view"]
+
+    def test_literal_at_values_are_not_taken_for_references(self):
+        g = copy.deepcopy(self.GRAPH)
+        for a in g["assets_in_view"]:
+            a["attributes"].append({"name": "X", "value": "@R1"})
+            a["attributes"].append({"name": "Y", "value": "@R2|@R3"})
+        restored = lineage_format_to_json(json_to_lineage_format(g))
+        assert_same_graph(restored, lineage_format_to_json(json_to_lineage_format(g, {"aliases": False})))
+
+    def test_values_with_special_characters(self):
+        g = copy.deepcopy(self.GRAPH)
+        for a in g["assets_in_view"]:
+            a["attributes"].append({"name": "Q", "value": "a|b=c d%e\nf:g"})
+            a["tags"] = ["x y", "a,b"]
+            a["resource_key"] = "rk with space"
+        restored = lineage_format_to_json(json_to_lineage_format(g))
+        assert_same_graph(restored, lineage_format_to_json(json_to_lineage_format(g, {"aliases": False})))
+
+    def test_single_node_and_empty_graph(self):
+        for g in ({"assets_in_view": [], "edges_in_view": []},
+                  {"assets_in_view": [self.GRAPH["assets_in_view"][0]], "edges_in_view": []}):
+            packed = lineage_format_to_json(json_to_lineage_format(g))
+            legacy = lineage_format_to_json(json_to_lineage_format(g, {"aliases": False}))
+            assert_same_graph(packed, legacy)
+
+    def test_graph_without_repetition_gets_no_extra_sections(self):
+        g = {"assets_in_view": [
+            {"id": "a", "name": "A", "type": "T1", "origin": "o1", "identity_key": "k1"},
+            {"id": "b", "name": "B", "type": "T2", "origin": "o2", "identity_key": "k2"},
+        ], "edges_in_view": [{"source": "a", "target": "b", "type": "direct"}]}
+        text = json_to_lineage_format(g)
+        for section in ("REF:", "IKP:", "NDEF:"):
+            assert section not in text
+
+    def test_decoding_is_stable(self):
+        once = lineage_format_to_json(self.packed())
+        twice = lineage_format_to_json(json_to_lineage_format(once))
+        assert_same_graph(once, twice)
+
+
+@pytest.mark.parametrize("name", ["out.json", "big_query_lineage.json"])
+class TestRealFiles:
+    def load(self, name):
+        path = ROOT / name
+        if not path.exists():
+            pytest.skip(f"{name} not available")
+        return json.loads(path.read_text())
+
+    def test_roundtrip_and_size(self, name):
+        g = self.load(name)
+        packed = json_to_lineage_format(g)
+        legacy = json_to_lineage_format(g, {"aliases": False})
+        assert_same_graph(lineage_format_to_json(packed), lineage_format_to_json(legacy))
+        assert len(packed) < len(legacy) * 0.6
+
+    def test_each_edge_keeps_its_type(self, name):
+        g = self.load(name)
+        restored = lineage_format_to_json(json_to_lineage_format(g))
+        wanted = sorted(json.dumps({k: e[k] for k in ("source", "target", "type") if k in e}, sort_keys=True)
+                        for e in g["edges_in_view"])
+        got = sorted(json.dumps({k: e[k] for k in ("source", "target", "type") if k in e}, sort_keys=True)
+                     for e in restored["edges_in_view"])
+        assert got == wanted
 
 
 class TestDecodeGroupedEdges:

@@ -101,12 +101,22 @@ convert_lineage_file_to_json('input.ldf', 'output.json')
 # Compact mode (single blank line between sections instead of two)
 ldf_compact = json_to_lineage_format(backend_response, {'compact': True})
 
+# Legacy, fully expanded output (no alias compression)
+ldf_expanded = json_to_lineage_format(backend_response, {'aliases': False})
+
 # Exclude fields from the output (applied to the input, before serialization)
 ldf_slim = json_to_lineage_format(
     backend_response,
     {'exclude_fields': ['children', 'technology.id', 'hierarchical_path.type', 'is_*']},
 )
 ```
+
+#### `aliases`
+
+A `bool` in the options dict, `True` by default. It removes repeated values from
+the output (see [Alias compression](#alias-compression)). `False` writes the
+expanded form of version 0.2.0. The decoder reads both forms. Command line:
+`--no-aliases`.
 
 #### `exclude_fields`
 
@@ -139,6 +149,9 @@ ldf json-to-lineage input.json output.ldf
 # Convert with compact format (minimal blank lines)
 ldf json-to-lineage input.json output.ldf --compact
 
+# Expanded output without alias compression
+ldf json-to-lineage input.json output.ldf --no-aliases
+
 # Exclude fields (comma-separated and/or repeated; names, dotted paths, wildcards)
 ldf json-to-lineage input.json output.ldf --exclude children,descendant_statistics,is_favorite,source_code_snippets
 
@@ -159,8 +172,10 @@ The Lineage Definition Format is a compact, plain-text format that defines repea
 |---|---|---|
 | `GRAPH` | Structural | Marker line + optional `dt=` / `ts=` meta |
 | `START` | Structural | Alias of the first asset |
-| `E` | Structural | Directed edges: `N1>N2`; an edge without a target (end edge) is just the source alias: `N7` |
-| `EP` | Structural | Edge properties: `N1>N2 etype=direct` (end edge: `N7 etype=summary`), listed in `E` order |
+| `E` | Structural | Directed edges: `N1>N2`, grouped by source `N1>N2,N3`; an edge without a target (end edge) is just the source alias: `N7` |
+| `EP` | Structural | Edge properties: `N1>N2 etype=direct` (end edge: `N7 etype=summary`), listed in `E` order; `*>* etype=X` / `* etype=Y` are the defaults |
+| `NDEF` | Defaults | Node tokens shared by most nodes: `origin=design path=T1 flags=7` |
+| `IKP` | Lookup | `identity_key` prefixes: `P1=<encoded prefix>` |
 | `N` | Structural | Node definitions (see format below) |
 | `T` | Lookup | Technology names: `T1=PostgreSQL` |
 | `TID` | Lookup | Technology UUIDs: `T1=<uuid>` |
@@ -176,6 +191,25 @@ The Lineage Definition Format is a compact, plain-text format that defines repea
 | `PA` | Per-node | Project assignments (JSON): `N1=[…]` |
 | `SA` | Per-node | Space assignments (JSON): `N1=[…]` |
 | `DSD` | Per-node | Data source definition asset: `N1=id:name` |
+| `REF` | Lookup | Shared values of `HP` / `ATTR` / `DSD`: `R1=<value>`, used as `@R1` |
+
+### Alias compression
+
+With `aliases` on, repeated values are written once:
+
+| Construct | Example | Meaning |
+|---|---|---|
+| `REF` + `@Rn` | `R1=TRANSFORMATION_TAG=TRANSFORMING`, entry `N1=@R1\|@R2` | a whole entry value or one `\|`-separated element is replaced by the reference; a reference may refer to other references. An `@…` that is not defined in `REF` is a literal |
+| `*` entry | `HP:` `*=<value>`, `N3=<other>`, `N4=` | default value of `HP` / `DSD`. A node with its own entry keeps it; an empty entry (`N4=`) means none |
+| `IKP` | `P1=uuid/dsd%5BDatabase%5D/`, node `ikp=P1 ik=Asset%201…` | `identity_key` = prefix + `ik` |
+| `NDEF` | `origin=design flags=7` | tokens inherited by every node. A node's own token overrides it, an empty one (`origin=`) removes it; `flags=0` is written explicitly |
+| grouped `E` | `N1>N2,N3` | all targets of one source on one line |
+| default `EP` | `*>* etype=direct`, `* etype=summary` | type of edges with a target / of end edges; `N1>N2 etype=X` overrides it, `etype=` means no type |
+
+The text is smaller, the data is the same: assets and the set of edges (with their
+types) survive a roundtrip. The order of the edge list does not: sources keep their
+first-occurrence order and targets keep their original order. A section is written
+only when it saves space.
 
 ### Node Line Format
 
