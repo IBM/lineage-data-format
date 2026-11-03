@@ -20,8 +20,18 @@ from pathlib import Path
 
 import pytest  # type: ignore
 
-from ldf import json_to_lineage_format, lineage_format_to_json  # type: ignore
+from ldf import json_to_lineage_format as _json_to_lineage_format  # type: ignore
+from ldf import lineage_format_to_json  # type: ignore
 from .test_converter import BACKEND_RESPONSE
+
+
+def json_to_lineage_format(graph, options=None):
+    """The exclusion tests assert the exact, fully expanded text shape, so they
+    run with ``aliases`` off unless a test sets it explicitly. The compressed
+    form is covered by ``TestBigQueryLineage._check`` and ``test_aliases.py``."""
+    opts = dict(options or {})
+    opts.setdefault("aliases", False)
+    return _json_to_lineage_format(graph, opts)
 
 
 # ---------------------------------------------------------------------------
@@ -1141,6 +1151,16 @@ class TestBigQueryLineage:
         assert ("dt=" in text) == (not hit_dt), label
         assert ("ts=" in text) == (not hit_ts), label
 
+        # the compressed form decodes to the same assets and the same set of edges
+        packed = json_to_lineage_format(big, {"exclude_fields": exclude, "compact": compact, "aliases": True})
+        assert_no_traces(packed)
+        packed_restored = lineage_format_to_json(packed)
+        assert packed_restored["assets_in_view"] == restored["assets_in_view"], label
+        as_key = lambda e: json.dumps(e, sort_keys=True)  # noqa: E731
+        assert sorted(map(as_key, packed_restored["edges_in_view"])) == \
+            sorted(map(as_key, restored["edges_in_view"])), label
+        assert len(packed) <= len(text), label
+
         # re-serialising the decoded graph with the same exclusions is a fixed point
         again = lineage_format_to_json(json_to_lineage_format(restored, {"exclude_fields": exclude, "compact": compact}))
         assert again == restored, label
@@ -1158,7 +1178,7 @@ class TestCli:
         out = tmp_path / "out.ldf"
         import sys
         old = sys.argv
-        sys.argv = ["ldf", "json-to-lineage", str(src), str(out), *argv]
+        sys.argv = ["ldf", "json-to-lineage", str(src), str(out), "--no-aliases", *argv]
         try:
             main()
         finally:
@@ -1196,7 +1216,7 @@ class TestCli:
         from ldf import convert_json_file_to_lineage  # type: ignore
         src, out = tmp_path / "a.json", tmp_path / "a.ldf"
         src.write_text(json.dumps(BACKEND_RESPONSE))
-        convert_json_file_to_lineage(str(src), str(out), exclude_fields=["children"])
+        convert_json_file_to_lineage(str(src), str(out), exclude_fields=["children"], aliases=False)
         assert out.read_text() == ldf(graph(), ["children"])
 
 

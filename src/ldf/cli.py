@@ -47,6 +47,11 @@ Examples:
         help='Use compact format (no extra whitespace)'
     )
     json_parser.add_argument(
+        '--no-aliases',
+        action='store_true',
+        help='Disable alias compression (write the legacy, fully expanded form)'
+    )
+    json_parser.add_argument(
         '--exclude',
         action='append',
         default=[],
@@ -84,7 +89,8 @@ Examples:
                 args.input,
                 args.output,
                 compact=args.compact,
-                exclude_fields=exclude_fields
+                exclude_fields=exclude_fields,
+                aliases=not args.no_aliases
             )
             print(f"✓ Converted {args.input} → {args.output}")
         
