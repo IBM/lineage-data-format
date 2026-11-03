@@ -7,6 +7,45 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [Unreleased]
+
+---
+
+## [0.4.0] - 2026-11-03
+
+### Added
+
+- `no_urls` option (`--no-urls` on the CLI, `no_urls` argument of
+  `convert_json_file_to_lineage`): drops every `href`, including those inside the
+  catalog / project / space assignments. Same as excluding `href`.
+- `legend` option (`--legend`, `legend` argument of `convert_json_file_to_lineage`):
+  adds a `LEGEND` section as the first section, with one `SECTION=expansion` line
+  (e.g. `HP=Hierarchical path`) per abbreviated section present (`GRAPH` and `START`
+  are not listed). The decoder ignores it. Off by default.
+- `URL` section with `@Un` references (aliases on): `children.href` is stored as a
+  template with `{id}` (node token `ch=0,0,@U1`), and shared href prefixes in the
+  `CA` / `PA` / `SA` blobs as `@U2/rest`.
+- `SRC` section and compact `SCS` entries (aliases on): `N5=<snippet id>@S1@41:1-44:38`
+  with the `source_code` id written once in `SRC`. Nodes with unusual snippets keep the
+  JSON entry.
+- `descendant_statistics` is now stored as the `ds=` node token (`dsl=`, `dse=`, `dsn=`
+  when partly excluded, `dsj=` for unusual values). Before, it was silently lost in a
+  round trip.
+
+### Fixed
+
+- The decoder no longer adds `resource_key: null` to assets that had no `resource_key`;
+  the key is restored only when it has a value.
+
+### Changed
+
+- **The default output is different again**: with `aliases` on, `children.href` and
+  `source_code_snippets` use the forms above (e.g. 9767 → 5861 bytes on
+  `big_query_lineage.json`). The decoder still reads the older forms; `aliases=False` /
+  `--no-aliases` output is unchanged.
+
+---
+
 ## [0.3.0] - 2026-11-03
 
 ### Added
@@ -109,6 +148,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `resource_key` and `origin` containing spaces broke the N: line token parser
 - Technology deduplication used `name` instead of `id` — two technologies with the same name but different IDs were merged into one
 - `identity_key` field was not serialized or deserialized
+
+[0.4.0]: https://github.com/IBM/lineage-data-format/releases/tag/v0.4.0
 
 [0.2.0]: https://github.com/IBM/lineage-data-format/releases/tag/v0.2.0
 [0.1.1]: https://github.com/IBM/lineage-data-format/releases/tag/v0.1.1

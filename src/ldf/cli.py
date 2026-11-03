@@ -27,6 +27,12 @@ Examples:
   # Use compact format (no extra whitespace)
   ldf json-to-lineage input.json output.ldf --compact
 
+  # Drop all URLs (same as --exclude href)
+  ldf json-to-lineage input.json output.ldf --no-urls
+
+  # Add a legend that spells out the section abbreviations
+  ldf json-to-lineage input.json output.ldf --legend
+
   # Exclude fields (names, dotted paths, fnmatch wildcards)
   ldf json-to-lineage input.json output.ldf --exclude children,descendant_statistics,is_favorite,source_code_snippets
         """
@@ -50,6 +56,17 @@ Examples:
         '--no-aliases',
         action='store_true',
         help='Disable alias compression (write the legacy, fully expanded form)'
+    )
+    json_parser.add_argument(
+        '--no-urls',
+        action='store_true',
+        help='Drop every URL (the "href" field, also inside catalog/project/space '
+             'assignments); same as --exclude href'
+    )
+    json_parser.add_argument(
+        '--legend',
+        action='store_true',
+        help='Add a LEGEND section (first) that spells out the section abbreviations used'
     )
     json_parser.add_argument(
         '--exclude',
@@ -90,7 +107,9 @@ Examples:
                 args.output,
                 compact=args.compact,
                 exclude_fields=exclude_fields,
-                aliases=not args.no_aliases
+                aliases=not args.no_aliases,
+                no_urls=args.no_urls,
+                legend=args.legend
             )
             print(f"✓ Converted {args.input} → {args.output}")
         
