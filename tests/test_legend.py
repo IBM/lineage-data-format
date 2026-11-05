@@ -236,3 +236,16 @@ class TestRealData:
         text = json_to_lineage_format(data, {"aliases": aliases, "legend": True})
         assert lineage_format_to_json(text) == lineage_format_to_json(plain)
         assert legend_names(text) == [n for n in sections(plain) if n in _SECTION_LEGEND]
+
+
+class TestEdgeLegend:
+    def test_e_line_explains_arrow(self):
+        text = json_to_lineage_format(graph(), {"legend": True})
+        line = next(l for l in sections(text)["LEGEND"] if l.startswith("E="))
+        assert "N1>N2,N3 = N1 connects to N2 and N3" in line
+        assert "\n" not in line and not line.endswith(":")
+
+    def test_round_trip_still_ignores_legend(self):
+        g = graph()
+        assert lineage_format_to_json(json_to_lineage_format(g, {"legend": True})) == \
+            lineage_format_to_json(json_to_lineage_format(g))

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lineage-data-format"
-version = "0.4.0"
+version = "0.4.1"
 description = "Lineage Definition Format — token-optimized serialization for data lineage graphs"
 readme = "README.md"
 license = "BSD-3-Clause"

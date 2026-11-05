@@ -11,7 +11,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
-## [0.4.0] - 2026-11-03
+## [0.4.1] - 2026-11-05
 
 ### Added
 
@@ -21,7 +21,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `legend` option (`--legend`, `legend` argument of `convert_json_file_to_lineage`):
   adds a `LEGEND` section as the first section, with one `SECTION=expansion` line
   (e.g. `HP=Hierarchical path`) per abbreviated section present (`GRAPH` and `START`
-  are not listed). The decoder ignores it. Off by default.
+  are not listed); the `E` line also explains how to read `N1>N2,N3`. The decoder ignores it. Off by default.
 - `URL` section with `@Un` references (aliases on): `children.href` is stored as a
   template with `{id}` (node token `ch=0,0,@U1`), and shared href prefixes in the
   `CA` / `PA` / `SA` blobs as `@U2/rest`.
@@ -149,7 +149,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Technology deduplication used `name` instead of `id` — two technologies with the same name but different IDs were merged into one
 - `identity_key` field was not serialized or deserialized
 
-[0.4.0]: https://github.com/IBM/lineage-data-format/releases/tag/v0.4.0
+[0.4.1]: https://github.com/IBM/lineage-data-format/releases/tag/v0.4.1
 
 [0.2.0]: https://github.com/IBM/lineage-data-format/releases/tag/v0.2.0
 [0.1.1]: https://github.com/IBM/lineage-data-format/releases/tag/v0.1.1

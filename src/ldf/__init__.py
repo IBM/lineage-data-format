@@ -12,7 +12,7 @@ from .converter import (
     convert_lineage_file_to_json,
 )
 
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 
 __all__ = [
     "json_to_lineage_format",
