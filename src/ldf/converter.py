@@ -204,7 +204,7 @@ def _choose_ik_prefixes(
 # legend line must never end with ":" (it would be read as a section header)
 # nor contain a newline.
 _SECTION_LEGEND = {
-    "E": "Edges",
+    "E": "Edges: N1>N2,N3 = N1 connects to N2 and N3; bare N1 = no target",
     "EP": "Edge properties",
     "NDEF": "Node defaults",
     "IKP": "Identity key prefixes",
@@ -212,7 +212,7 @@ _SECTION_LEGEND = {
     "T": "Technology names",
     "TID": "Technology IDs",
     "ID": "Node IDs",
-    "URL": "URL templates and prefixes",
+    "URL": "URL templates and prefixes, used as @Un",
     "SRC": "Source code IDs",
     "NAME": "Node names",
     "BT": "Business terms",
@@ -225,7 +225,7 @@ _SECTION_LEGEND = {
     "PA": "Project assignments",
     "SA": "Space assignments",
     "DSD": "Data source definition",
-    "REF": "References",
+    "REF": "Shared values, used as @Rn",
 }
 
 
