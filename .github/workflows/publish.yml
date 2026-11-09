@@ -61,7 +61,8 @@ jobs:
     name: Test (Python ${{ matrix.python-version }})
     needs: check-version
     if: needs.check-version.outputs.publish == 'true'
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest is Ubuntu 26.04, which has no prebuilt Python 3.9.
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: true
       matrix:
